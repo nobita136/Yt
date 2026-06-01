@@ -813,56 +813,49 @@ function openVideo(url){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
-      const qualities=d.quality_options||[];
+      const combined=(d.formats&&d.formats.combined)||[];
+      const vonly=(d.formats&&d.formats.video_only)||[];
       const aonly=(d.formats&&d.formats.audio_only)||[];
-      let qHtml='';
-      qualities.forEach(q=>{
-        const label=q.height>=1080?'Full HD':q.height>=720?'HD':q.height>=480?'SD':'Low';
-        const dlUrl=`/download/video?url=${encodeURIComponent(url)}&height=${q.height}`;
-        qHtml+=`<div class="qrow">
+
+      function fmtRow(f,badge){
+        const label=badge==='Video+Audio'?(f.height?(f.height>=1080?'Full HD':f.height>=720?'HD':f.height>=480?'SD':'Low'):''):'';
+        const det=[f.ext, f.height?f.height+'p':null, f.fps?f.fps+'fps':null,
+                   f.vcodec&&f.vcodec!=='none'?f.vcodec.split('.')[0]:null,
+                   f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,
+                   f.abr?f.abr+' kbps':null, f.filesize_human].filter(Boolean).join(' · ');
+        return`<div class="qrow">
           <div class="qbadge">
-            <div class="qres">${q.height}p</div>
-            <div class="qfps">${q.fps?q.fps+'fps':''}</div>
+            <div class="qres">${f.height?f.height+'p':(f.ext||'').toUpperCase()}</div>
+            <div class="qfps">${f.fps?f.fps+'fps':f.abr?f.abr+'kbps':''}</div>
           </div>
           <div class="qinfo">
-            <div class="ql">${label} · MP4 · With Audio</div>
+            <div class="ql">${esc(label||badge)} · ${esc(det)}</div>
           </div>
-          <a class="dl-btn" href="${dlUrl}" onclick="startDl(this)">⬇ Download</a>
+          <a class="dl-btn" href="${f.url}" target="_blank">⬇ Download</a>
         </div>`;
-      });
-      let aHtml='';
-      aonly.forEach(f=>{
-        const det=[f.ext,f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,f.abr?f.abr+' kbps':null,f.filesize_human].filter(Boolean).join(' · ');
-        aHtml+=`<div class="afmt-row">
-          <div class="afmt-info">
-            <div class="afmt-top"><span class="abadge">Audio</span>${esc(f.abr?f.abr+' kbps':'—')}</div>
-            <div class="afmt-detail">${esc(det)}</div>
-          </div>
-          <a class="dl-btn-a" href="${f.url}" target="_blank">⬇ Download</a>
-        </div>`;
-      });
+      }
+
+      let cHtml=combined.map(f=>fmtRow(f,'Video+Audio')).join('');
+      let vHtml=vonly.map(f=>fmtRow(f,'Video Only')).join('');
+      let aHtml=aonly.map(f=>fmtRow(f,'Audio Only')).join('');
+
+      const tabs=`<div class="ftabs">
+        ${combined.length?`<button class="ftab active" onclick="switchTab(this,'tv')">Video+Audio<span class="fcnt">${combined.length}</span></button>`:''}
+        ${vonly.length?`<button class="ftab${!combined.length?' active':''}" onclick="switchTab(this,'tvonly')">Video Only<span class="fcnt">${vonly.length}</span></button>`:''}
+        ${aonly.length?`<button class="ftab${!combined.length&&!vonly.length?' active':''}" onclick="switchTab(this,'ta')">Audio Only<span class="fcnt">${aonly.length}</span></button>`:''}
+      </div>`;
+
       setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
         <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
-        <div class="ftabs">
-          <button class="ftab active" onclick="switchTab(this,'tv')">Video<span class="fcnt">${qualities.length}</span></button>
-          ${aonly.length?`<button class="ftab" onclick="switchTab(this,'ta')">Audio Only<span class="fcnt">${aonly.length}</span></button>`:''}
-        </div>
-        <div class="fpanel active" id="tv">
-          <div style="display:flex;flex-direction:column;gap:7px;">${qHtml||'<p style="color:var(--muted);font-size:.85rem;">No video formats found.</p>'}</div>
-          <div class="note-ok">✅ All qualities include audio — merged before download.</div>
-        </div>
-        ${aonly.length?`<div class="fpanel" id="ta"><div style="display:flex;flex-direction:column;gap:6px;">${aHtml}</div></div>`:''}
+        ${tabs}
+        ${combined.length?`<div class="fpanel active" id="tv"><div style="display:flex;flex-direction:column;gap:7px;">${cHtml}</div></div>`:''}
+        ${vonly.length?`<div class="fpanel${!combined.length?' active':''}" id="tvonly"><div style="display:flex;flex-direction:column;gap:7px;">${vHtml}</div></div>`:''}
+        ${aonly.length?`<div class="fpanel${!combined.length&&!vonly.length?' active':''}" id="ta"><div style="display:flex;flex-direction:column;gap:6px;">${aHtml}</div></div>`:''}
       `);
     })
     .catch(e=>setMC(`<div class="err-box">❌ ${e.message}</div>`));
-}
-
-function startDl(el){
-  el.classList.add('loading');
-  el.textContent='⏳ Merging…';
-  setTimeout(()=>{el.classList.remove('loading');el.innerHTML='⬇ Download';},180000);
 }
 
 function switchTab(btn,pid){

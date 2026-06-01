@@ -1,17 +1,12 @@
 import os
-import uuid
-import threading
 import yt_dlp
-from flask import Flask, request, jsonify, render_template, send_file, after_this_request
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
 COOKIES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
-FFMPEG_PATH  = "/nix/store/bl78f0v8yq8nqn3kp98lbk79kp5k62a0-replit-runtime-path/bin/ffmpeg"
-TMP_DIR      = "/tmp/ytdl"
-os.makedirs(TMP_DIR, exist_ok=True)
 
 
 def normalize_url(link):
@@ -26,14 +21,40 @@ def normalize_url(link):
     return link
 
 
-def get_ydl_opts_base():
-    return {
-        "cookiefile":      COOKIES_FILE,
-        "quiet":           True,
-        "no_warnings":     True,
-        "skip_download":   True,
-        "ffmpeg_location": FFMPEG_PATH,
+def get_ydl_opts(use_cookies=False):
+    opts = {
+        "quiet":         True,
+        "no_warnings":   True,
+        "skip_download": True,
     }
+    if use_cookies:
+        opts["cookiefile"] = COOKIES_FILE
+    return opts
+
+
+def extract_info_smart(url):
+    """
+    Always try with cookies first (for auth-required/bot-protected videos).
+    If cookies cause YouTube to return a TV-downgraded player (no real formats),
+    automatically retry without cookies to get full format list.
+    """
+    try:
+        with yt_dlp.YoutubeDL(get_ydl_opts(use_cookies=True)) as ydl:
+            info = ydl.extract_info(url, download=False)
+        # Check if we only got storyboard/image formats (TV-player downgrade)
+        real_fmts = [f for f in info.get("formats", [])
+                     if f.get("vcodec", "none") not in (None, "none")
+                     or f.get("acodec", "none") not in (None, "none")]
+        if not real_fmts:
+            raise Exception("no_real_formats")
+        return info
+    except Exception as e:
+        msg = str(e).lower()
+        # TV-player downgrade or format-not-available → retry without cookies
+        if any(k in msg for k in ("format is not available", "no_real_formats", "only images")):
+            with yt_dlp.YoutubeDL(get_ydl_opts(use_cookies=False)) as ydl:
+                return ydl.extract_info(url, download=False)
+        raise
 
 
 def format_duration(seconds):
@@ -59,12 +80,41 @@ def format_filesize(size):
         return f"{size / (1024 * 1024 * 1024):.2f} GB"
 
 
+def build_format_entry(fmt):
+    vcodec   = fmt.get("vcodec") or "none"
+    acodec   = fmt.get("acodec") or "none"
+    has_video = vcodec not in (None, "none")
+    has_audio = acodec not in (None, "none")
+    height   = fmt.get("height")
+    width    = fmt.get("width")
+    size     = fmt.get("filesize") or fmt.get("filesize_approx")
+    return {
+        "format_id":      fmt.get("format_id"),
+        "ext":            fmt.get("ext"),
+        "resolution":     fmt.get("resolution") or (
+                          f"{width}x{height}" if width and height else "audio only"),
+        "height":         height,
+        "width":          width,
+        "fps":            fmt.get("fps"),
+        "vcodec":         vcodec,
+        "acodec":         acodec,
+        "abr":            fmt.get("abr") or 0,
+        "vbr":            fmt.get("vbr"),
+        "tbr":            fmt.get("tbr"),
+        "filesize":       size,
+        "filesize_human": format_filesize(size),
+        "format_note":    fmt.get("format_note") or "",
+        "has_video":      has_video,
+        "has_audio":      has_audio,
+        "url":            fmt.get("url"),
+    }
+
+
 def parse_formats(info):
     combined   = []
     video_only = []
     audio_only = []
     seen       = set()
-
     for fmt in info.get("formats", []):
         if not fmt.get("url"):
             continue
@@ -72,36 +122,9 @@ def parse_formats(info):
         if fid in seen:
             continue
         seen.add(fid)
-
-        vcodec    = fmt.get("vcodec") or "none"
-        acodec    = fmt.get("acodec") or "none"
-        has_video = vcodec not in (None, "none")
-        has_audio = acodec not in (None, "none")
-        height    = fmt.get("height")
-        width     = fmt.get("width")
-
-        entry = {
-            "format_id":      fid,
-            "ext":            fmt.get("ext"),
-            "resolution":     fmt.get("resolution") or (
-                f"{width}x{height}" if width and height else "audio only"
-            ),
-            "height":         height,
-            "width":          width,
-            "fps":            fmt.get("fps"),
-            "vcodec":         vcodec,
-            "acodec":         acodec,
-            "abr":            fmt.get("abr") or 0,
-            "vbr":            fmt.get("vbr"),
-            "filesize":       fmt.get("filesize") or fmt.get("filesize_approx"),
-            "filesize_human": format_filesize(fmt.get("filesize") or fmt.get("filesize_approx")),
-            "url":            fmt.get("url"),
-            "has_video":      has_video,
-            "has_audio":      has_audio,
-            "format_note":    fmt.get("format_note") or "",
-            "tbr":            fmt.get("tbr"),
-        }
-
+        entry     = build_format_entry(fmt)
+        has_video = entry["has_video"]
+        has_audio = entry["has_audio"]
         if has_video and has_audio:
             combined.append(entry)
         elif has_video:
@@ -113,15 +136,6 @@ def parse_formats(info):
     video_only.sort(key=lambda x: x.get("height") or 0, reverse=True)
     audio_only.sort(key=lambda x: x.get("abr") or 0, reverse=True)
     return combined, video_only, audio_only
-
-
-def get_quality_options(combined, video_only):
-    heights = {}
-    for f in combined + video_only:
-        h = f.get("height")
-        if h and h not in heights:
-            heights[h] = f.get("fps")
-    return sorted(heights.items(), reverse=True)
 
 
 # ══════════════════════════════════════════════════════
@@ -140,7 +154,7 @@ def search():
     if not query:
         return jsonify({"error": "Query is required"}), 400
     try:
-        opts = get_ydl_opts_base()
+        opts = get_ydl_opts()
         opts["extract_flat"] = True
         opts["playlistend"]  = limit
         with yt_dlp.YoutubeDL(opts) as ydl:
@@ -167,128 +181,53 @@ def search():
         return jsonify({"error": str(e)}), 500
 
 
-# ── /download/audio?url=<link>
-#    Returns JSON with all available audio formats.
+# ── /download/audio?url=<youtube_url>
+#    Returns JSON: best_audio + all_audio_formats with direct download URLs
 @app.route("/download/audio")
 @app.route("/download/audio/<path:link>")
 def download_audio(link=None):
     raw = request.args.get("url") or link or ""
+    if not raw:
+        return jsonify({"status": "error", "error": "url parameter required"}), 400
     url = normalize_url(raw)
     try:
-        opts           = get_ydl_opts_base()
-        opts["format"] = "bestaudio/best"
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-
-        fmts = info.get("requested_formats") or [info]
-        fmt  = fmts[0]
+        info = extract_info_smart(url)
         _, _, audio_only = parse_formats(info)
+        best = audio_only[0] if audio_only else None
 
         return jsonify({
-            "status":   "ok",
-            "title":    info.get("title"),
-            "thumbnail":info.get("thumbnail"),
-            "duration": format_duration(info.get("duration")),
-            "channel":  info.get("uploader"),
-            "best_audio": {
-                "format_id":      fmt.get("format_id"),
-                "ext":            fmt.get("ext"),
-                "acodec":         fmt.get("acodec"),
-                "abr":            fmt.get("abr"),
-                "filesize":       fmt.get("filesize") or fmt.get("filesize_approx"),
-                "filesize_human": format_filesize(fmt.get("filesize") or fmt.get("filesize_approx")),
-                "url":            fmt.get("url"),
-            },
+            "status":            "ok",
+            "title":             info.get("title"),
+            "thumbnail":         info.get("thumbnail"),
+            "duration":          format_duration(info.get("duration")),
+            "channel":           info.get("uploader"),
+            "best_audio":        best,
             "all_audio_formats": audio_only,
         })
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 500
 
 
-# ── /download/video?url=<link>[&height=N]
-#    • Without &height=  → JSON with all formats (combined / video_only / audio_only)
-#    • With    &height=N → Downloads merged Video+Audio MP4 file directly
+# ── /download/video?url=<youtube_url>
+#    Returns JSON: all formats (combined / video_only / audio_only) with direct download URLs
 @app.route("/download/video")
 @app.route("/download/video/<path:link>")
 def download_video(link=None):
-    raw    = request.args.get("url") or link or ""
-    url    = normalize_url(raw)
-    height = request.args.get("height", "").strip()
-
-    # ── DOWNLOAD MODE (height param present) ──────────────────────────
-    if height:
-        fmt_selector = (f"bestvideo[height<={height}]+bestaudio/best"
-                        if height != "best"
-                        else "bestvideo+bestaudio/best")
-
-        session_id = uuid.uuid4().hex
-        out_tmpl   = os.path.join(TMP_DIR, f"{session_id}.%(ext)s")
-        out_mp4    = os.path.join(TMP_DIR, f"{session_id}.mp4")
-
-        try:
-            opts = {
-                "cookiefile":          COOKIES_FILE,
-                "quiet":               True,
-                "no_warnings":         True,
-                "format":              fmt_selector,
-                "outtmpl":             out_tmpl,
-                "ffmpeg_location":     FFMPEG_PATH,
-                "merge_output_format": "mp4",
-                "postprocessors":      [{
-                    "key":            "FFmpegVideoConvertor",
-                    "preferedformat": "mp4",
-                }],
-            }
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                info = ydl.extract_info(url, download=True)
-
-            title      = info.get("title", "video")
-            safe_title = "".join(c for c in title if c.isalnum() or c in " _-")[:60].strip() or "video"
-            dl_name    = f"{safe_title}_{height}p.mp4"
-
-            if not os.path.exists(out_mp4):
-                possible = [f for f in os.listdir(TMP_DIR) if f.startswith(session_id)]
-                if possible:
-                    out_mp4 = os.path.join(TMP_DIR, possible[0])
-                else:
-                    return jsonify({"status": "error", "error": "Output file not found after merge"}), 500
-
-            def cleanup(path):
-                try: os.remove(path)
-                except: pass
-
-            @after_this_request
-            def remove_file(response):
-                threading.Thread(target=cleanup, args=(out_mp4,), daemon=True).start()
-                return response
-
-            return send_file(out_mp4, as_attachment=True,
-                             download_name=dl_name, mimetype="video/mp4")
-
-        except Exception as e:
-            for f in os.listdir(TMP_DIR):
-                if f.startswith(session_id):
-                    try: os.remove(os.path.join(TMP_DIR, f))
-                    except: pass
-            return jsonify({"status": "error", "error": str(e)}), 500
-
-    # ── INFO MODE (no height param) ───────────────────────────────────
+    raw = request.args.get("url") or link or ""
+    if not raw:
+        return jsonify({"status": "error", "error": "url parameter required"}), 400
+    url = normalize_url(raw)
     try:
-        opts = get_ydl_opts_base()
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-
+        info = extract_info_smart(url)
         combined, video_only, audio_only = parse_formats(info)
-        quality_options = get_quality_options(combined, video_only)
 
         return jsonify({
-            "status":          "ok",
-            "title":           info.get("title"),
-            "thumbnail":       info.get("thumbnail"),
-            "duration":        format_duration(info.get("duration")),
-            "channel":         info.get("uploader"),
-            "description":     (info.get("description") or "")[:300],
-            "quality_options": [{"height": h, "fps": f} for h, f in quality_options],
+            "status":         "ok",
+            "title":          info.get("title"),
+            "thumbnail":      info.get("thumbnail"),
+            "duration":       format_duration(info.get("duration")),
+            "channel":        info.get("uploader"),
+            "description":    (info.get("description") or "")[:300],
             "formats": {
                 "combined":   combined,
                 "video_only": video_only,
@@ -296,7 +235,6 @@ def download_video(link=None):
             },
             "formats_flat":   combined + video_only + audio_only,
             "formats_count":  len(combined) + len(video_only) + len(audio_only),
-            "note": "Add ?height=1080 (or 720/480/360) to download a merged Video+Audio MP4 file.",
         })
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 500
