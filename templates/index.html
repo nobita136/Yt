@@ -552,17 +552,17 @@ footer strong{color:var(--text);}
   <div class="ep-card">
     <div class="ep-head">
       <span class="method get">GET</span>
-      <span class="ep-path">/download/audio/{youtube_url}</span>
+      <span class="ep-path">/download/audio?url={youtube_url}</span>
       <span class="ep-tag">Audio</span>
     </div>
     <div class="ep-body">
-      <h4>Path Parameter</h4>
+      <h4>Query Parameter</h4>
       <table class="ptable">
         <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="pname">youtube_url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL (youtu.be or youtube.com/watch)</td></tr>
+        <tr><td class="pname">url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL (youtu.be or youtube.com/watch)</td></tr>
       </table>
       <h4>Example Request</h4>
-      <div class="codeblock">GET /download/audio/https://youtu.be/HNMP1UdjOsE</div>
+      <div class="codeblock">GET /download/audio?url=https://youtu.be/HNMP1UdjOsE</div>
       <br/>
       <h4>Example Response</h4>
       <div class="codeblock">{
@@ -591,18 +591,18 @@ footer strong{color:var(--text);}
   <div class="ep-card">
     <div class="ep-head">
       <span class="method get">GET</span>
-      <span class="ep-path">/download/video/{youtube_url}</span>
+      <span class="ep-path">/download/video?url={youtube_url}</span>
       <span class="ep-tag">Video</span>
     </div>
     <div class="ep-body">
       <h4>Path &amp; Query Parameters</h4>
       <table class="ptable">
         <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="pname">youtube_url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL in the path</td></tr>
+        <tr><td class="pname">url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL (youtu.be or youtube.com/watch)</td></tr>
         <tr><td class="pname">height</td><td>integer / "best"</td><td><span class="popt">No</span></td><td>When provided, downloads a merged Video+Audio MP4 at that quality (e.g. 1080, 720, 480, 360)</td></tr>
       </table>
-      <h4>Without <code style="color:#82b1ff">?height</code> — Returns JSON with all formats</h4>
-      <div class="codeblock">GET /download/video/https://youtu.be/HNMP1UdjOsE
+      <h4>Without <code style="color:#82b1ff">&amp;height</code> — Returns JSON with all formats</h4>
+      <div class="codeblock">GET /download/video?url=https://youtu.be/HNMP1UdjOsE
 
 {
   <span class="s">"status"</span>:          <span class="s">"ok"</span>,
@@ -622,14 +622,14 @@ footer strong{color:var(--text);}
   <span class="s">"formats_count"</span>:  <span class="n">23</span>
 }</div>
       <br/>
-      <h4>With <code style="color:#82b1ff">?height=720</code> — Downloads merged MP4 file</h4>
-      <div class="codeblock">GET /download/video/https://youtu.be/HNMP1UdjOsE?height=720
+      <h4>With <code style="color:#82b1ff">&amp;height=720</code> — Downloads merged MP4 file</h4>
+      <div class="codeblock">GET /download/video?url=https://youtu.be/HNMP1UdjOsE&amp;height=720
 
 <span class="c">→ Response: binary video/mp4 file (Content-Disposition: attachment)</span>
 <span class="c">→ Video and audio are merged server-side before download</span></div>
       <div class="tip">
         <strong>Bot usage:</strong><br/>
-        <code>wget "BASE_URL/download/video/YOUTUBE_URL?height=1080" -O output.mp4</code><br/><br/>
+        <code>wget "BASE_URL/download/video?url=YOUTUBE_URL&amp;height=1080" -O output.mp4</code><br/><br/>
         Supported height values: <code>2160</code> · <code>1440</code> · <code>1080</code> · <code>720</code> · <code>480</code> · <code>360</code> · <code>240</code> · <code>best</code>
       </div>
     </div>
@@ -768,7 +768,7 @@ function spinHtml(c){
 function openAudio(url){
   openModal();
   setMC(spinHtml('var(--green)'));
-  fetch('/download/audio/'+encodeURIComponent(url))
+  fetch('/download/audio?url='+encodeURIComponent(url))
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
@@ -809,7 +809,7 @@ function openAudio(url){
 function openVideo(url){
   openModal();
   setMC(spinHtml('var(--red)'));
-  fetch('/download/video/'+encodeURIComponent(url))
+  fetch('/download/video?url='+encodeURIComponent(url))
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
@@ -818,7 +818,7 @@ function openVideo(url){
       let qHtml='';
       qualities.forEach(q=>{
         const label=q.height>=1080?'Full HD':q.height>=720?'HD':q.height>=480?'SD':'Low';
-        const dlUrl=`/download/video/${encodeURIComponent(url)}?height=${q.height}`;
+        const dlUrl=`/download/video?url=${encodeURIComponent(url)}&height=${q.height}`;
         qHtml+=`<div class="qrow">
           <div class="qbadge">
             <div class="qres">${q.height}p</div>
@@ -877,8 +877,8 @@ function testApi(type){
   const u=document.getElementById('testUrl').value.trim();
   if(!u)return;
   const path=type==='audio'
-    ?'/download/audio/'+encodeURIComponent(u)
-    :'/download/video/'+encodeURIComponent(u);
+    ?'/download/audio?url='+encodeURIComponent(u)
+    :'/download/video?url='+encodeURIComponent(u);
   const out=document.getElementById('testOutput');
   document.getElementById('testResult').style.display='block';
   out.textContent='Loading…';

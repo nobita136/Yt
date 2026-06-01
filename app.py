@@ -167,11 +167,13 @@ def search():
         return jsonify({"error": str(e)}), 500
 
 
-# ── /download/audio/<link>
+# ── /download/audio?url=<link>
 #    Returns JSON with all available audio formats.
+@app.route("/download/audio")
 @app.route("/download/audio/<path:link>")
-def download_audio(link):
-    url = normalize_url(link)
+def download_audio(link=None):
+    raw = request.args.get("url") or link or ""
+    url = normalize_url(raw)
     try:
         opts           = get_ydl_opts_base()
         opts["format"] = "bestaudio/best"
@@ -203,12 +205,14 @@ def download_audio(link):
         return jsonify({"status": "error", "error": str(e)}), 500
 
 
-# ── /download/video/<link>
-#    • Without ?height=  → JSON with all formats (combined / video_only / audio_only)
-#    • With    ?height=N → Downloads merged Video+Audio MP4 file directly
+# ── /download/video?url=<link>[&height=N]
+#    • Without &height=  → JSON with all formats (combined / video_only / audio_only)
+#    • With    &height=N → Downloads merged Video+Audio MP4 file directly
+@app.route("/download/video")
 @app.route("/download/video/<path:link>")
-def download_video(link):
-    url    = normalize_url(link)
+def download_video(link=None):
+    raw    = request.args.get("url") or link or ""
+    url    = normalize_url(raw)
     height = request.args.get("height", "").strip()
 
     # ── DOWNLOAD MODE (height param present) ──────────────────────────
