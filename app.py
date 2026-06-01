@@ -6,7 +6,41 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-COOKIES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
+# ── Hardcoded YouTube cookies (passed via HTTP header — avoids TV-player downgrade) ──
+_YT_COOKIE = (
+    "LOGIN_INFO=AFmmF2swRQIgFyjPUFLb8f4VIyvVK5sroURcwRlEtHk5LAtINMiICuwCIQDWxRnn5gPpr8uP88h_oV3p3CnG213VoFdxn3IkyeL4ug"
+    ":QUQ3MjNmd1paQjZfSWtmbEotMlJHLWVjSWptdExwaUM4aUJmd25yenlVbzR5UHdzYzFBdGVGTXJ6UEQtMFZEak5CSURCS2F2QklCU09fUE1nTzFY"
+    "THpmb2t2bC00SFZzZEotVVpnYVU5dE9lRlVOeXN5WVprVWRSLVRabnlsVElURUgtOFRiQWk1bkN6ZXdNak15aWllZFJBTHR5aVNIZjhB; "
+    "HSID=A2tXT98POOHO7yo4s; "
+    "SSID=ApzcjnJs6s7VV2L7V; "
+    "APISID=Oa3SOSdRa4H_ODSf/Az5e6YdwibvjR1Lr-; "
+    "SAPISID=jj62wAPusEtJ5EtO/Agnw_lZ494nyLPq0G; "
+    "__Secure-1PAPISID=jj62wAPusEtJ5EtO/Agnw_lZ494nyLPq0G; "
+    "__Secure-3PAPISID=jj62wAPusEtJ5EtO/Agnw_lZ494nyLPq0G; "
+    "PREF=f6=40000000&tz=UTC&f4=4000000&f7=100&hl=en; "
+    "SID=g.a000-giVPCs33Ht5-uPC3eTCs1l7XAp5phrcHqRd0NCtddv5t2FEl8a4vL4fPBntY8rsvBnpvAACgYKAS4SARMSFQHGX2Mim8rvhTXVEVOVz8aP3_6u7RoVAUF8yKr2ICYJU-nQOEP7BhYrCOxa0076; "
+    "__Secure-1PSID=g.a000-giVPCs33Ht5-uPC3eTCs1l7XAp5phrcHqRd0NCtddv5t2FEBjBEDT02rHAo-mVGoQsjvAACgYKAdASARMSFQHGX2MiDeuaD50tQYC33tS0iSBcQRoVAUF8yKpyeRuBq6l6-wR_bILajzhg0076; "
+    "__Secure-3PSID=g.a000-giVPCs33Ht5-uPC3eTCs1l7XAp5phrcHqRd0NCtddv5t2FEy2Zb9ToYSDVHneIDUSurcQACgYKAa8SARMSFQHGX2MiDqdllsTHRkBNdsEaXenIUBoVAUF8yKo-UphSBg4dr9iUUiwcFSy40076; "
+    "__Secure-1PSIDTS=sidts-CjUBhkeRdxgkkUnrtwMBUEroeu-foOo2EjBZvZmOBu7BG9TP2TUqz7xcAR0uVT18YiKtdaFbkRAA; "
+    "__Secure-3PSIDTS=sidts-CjUBhkeRdxgkkUnrtwMBUEroeu-foOo2EjBZvZmOBu7BG9TP2TUqz7xcAR0uVT18YiKtdaFbkRAA; "
+    "SIDCC=AKEyXzUga5l0YVl2eJk8Sip9jGicjUVDK7O10SPuicesU0fxQaBaHPh_Pkt8g9dBHluG6ZVJ; "
+    "__Secure-1PSIDCC=AKEyXzXHXyV_EoiAjwwRPQiXlmT4Tg2X9lXh_Br7R33RRwYu9n_SLmObXCGFb_tUDvrKv0mW; "
+    "__Secure-3PSIDCC=AKEyXzWFmp-jAH7GnuecuisT6cDKXkgeBLOOFNEfXNLCDak3d_Nbe7fdBAuwNud6PcBL85w1DYc; "
+    "VISITOR_INFO1_LIVE=g5BHFS17MIA; "
+    "VISITOR_PRIVACY_METADATA=CgJQSxIEGgAgEg%3D%3D; "
+    "__Secure-ROLLOUT_TOKEN=CIn9odmM0viHpwEQppqq2eDJkAMYx-b0uM7mlAM%3D; "
+    "__Secure-YNID=18.YT=My--KUsK9skM1Me935C-dc5rKjx06HsQjHA6XyHzUUODvY_-jZxnTTbtCca9qnxT75eRoU9IyQY3slohaAkHTz4Di0OOisBjGvuJi5ffbel5u29on5eGy_6ynKP2npp561odRJP1_823Hw9dfoY2c5sOdyt5O99Jf0Lup-bau5JUgxCN27jATL_C38UnWw55UGa3gD6qnPtkCY8vB4GggrcjcrXXHs8mTEbx1w97y8Ux6shHNC3vwNvxGOaIqt7QpcxDobVL2VP0veMvBAq-dNRU5M0AVulzwAkpABlnBirNL9yRVlbfzNs9IjyAdIOV3Q4biNiYs3rC1YnBsz6c9Q; "
+    "YSC=qYN3PUEMEOY"
+)
+
+_YDL_HEADERS = {
+    "Cookie":     _YT_COOKIE,
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+}
 
 
 def normalize_url(link):
@@ -21,40 +55,18 @@ def normalize_url(link):
     return link
 
 
-def get_ydl_opts(use_cookies=False):
-    opts = {
-        "quiet":         True,
-        "no_warnings":   True,
+def get_ydl_opts():
+    return {
+        "quiet":        True,
+        "no_warnings":  True,
         "skip_download": True,
+        "http_headers": _YDL_HEADERS,
     }
-    if use_cookies:
-        opts["cookiefile"] = COOKIES_FILE
-    return opts
 
 
-def extract_info_smart(url):
-    """
-    Always try with cookies first (for auth-required/bot-protected videos).
-    If cookies cause YouTube to return a TV-downgraded player (no real formats),
-    automatically retry without cookies to get full format list.
-    """
-    try:
-        with yt_dlp.YoutubeDL(get_ydl_opts(use_cookies=True)) as ydl:
-            info = ydl.extract_info(url, download=False)
-        # Check if we only got storyboard/image formats (TV-player downgrade)
-        real_fmts = [f for f in info.get("formats", [])
-                     if f.get("vcodec", "none") not in (None, "none")
-                     or f.get("acodec", "none") not in (None, "none")]
-        if not real_fmts:
-            raise Exception("no_real_formats")
-        return info
-    except Exception as e:
-        msg = str(e).lower()
-        # TV-player downgrade or format-not-available → retry without cookies
-        if any(k in msg for k in ("format is not available", "no_real_formats", "only images")):
-            with yt_dlp.YoutubeDL(get_ydl_opts(use_cookies=False)) as ydl:
-                return ydl.extract_info(url, download=False)
-        raise
+def extract_info(url):
+    with yt_dlp.YoutubeDL(get_ydl_opts()) as ydl:
+        return ydl.extract_info(url, download=False)
 
 
 def format_duration(seconds):
@@ -191,7 +203,7 @@ def download_audio(link=None):
         return jsonify({"status": "error", "error": "url parameter required"}), 400
     url = normalize_url(raw)
     try:
-        info = extract_info_smart(url)
+        info = extract_info(url)
         _, _, audio_only = parse_formats(info)
         best = audio_only[0] if audio_only else None
 
@@ -218,7 +230,7 @@ def download_video(link=None):
         return jsonify({"status": "error", "error": "url parameter required"}), 400
     url = normalize_url(raw)
     try:
-        info = extract_info_smart(url)
+        info = extract_info(url)
         combined, video_only, audio_only = parse_formats(info)
 
         return jsonify({
