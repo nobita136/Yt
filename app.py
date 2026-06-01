@@ -14,6 +14,18 @@ TMP_DIR      = "/tmp/ytdl"
 os.makedirs(TMP_DIR, exist_ok=True)
 
 
+def normalize_url(link):
+    """Fix https:/ → https:// (double slash stripped by URL routing)."""
+    link = link.strip()
+    if link.startswith("https:/") and not link.startswith("https://"):
+        link = "https://" + link[7:]
+    elif link.startswith("http:/") and not link.startswith("http://"):
+        link = "http://" + link[6:]
+    elif not link.startswith("http"):
+        link = "https://" + link
+    return link
+
+
 def get_ydl_opts_base():
     return {
         "cookiefile":      COOKIES_FILE,
@@ -159,7 +171,7 @@ def search():
 #    Returns JSON with all available audio formats.
 @app.route("/download/audio/<path:link>")
 def download_audio(link):
-    url = link if link.startswith("http") else f"https://{link}"
+    url = normalize_url(link)
     try:
         opts           = get_ydl_opts_base()
         opts["format"] = "bestaudio/best"
@@ -196,7 +208,7 @@ def download_audio(link):
 #    • With    ?height=N → Downloads merged Video+Audio MP4 file directly
 @app.route("/download/video/<path:link>")
 def download_video(link):
-    url    = link if link.startswith("http") else f"https://{link}"
+    url    = normalize_url(link)
     height = request.args.get("height", "").strip()
 
     # ── DOWNLOAD MODE (height param present) ──────────────────────────
