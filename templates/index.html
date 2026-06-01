@@ -10,7 +10,6 @@
   --red2: #ff6b35;
   --green: #00e676;
   --blue: #448aff;
-  --purple: #9c27b0;
   --bg: #080810;
   --bg2: #0e0e1a;
   --bg3: #14141f;
@@ -22,452 +21,174 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{
-  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* ── SCROLLBAR ── */
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 ::-webkit-scrollbar{width:6px;}
 ::-webkit-scrollbar-track{background:var(--bg2);}
 ::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
 
-/* ── NAV ── */
-nav{
-  position:sticky;top:0;z-index:200;
-  background:rgba(8,8,16,0.85);
-  backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;
-  display:flex;align-items:center;justify-content:space-between;
-  height:64px;
-}
-.logo{
-  display:flex;align-items:center;gap:10px;
-  font-size:1.25rem;font-weight:800;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  letter-spacing:.5px;
-}
-.logo svg{flex-shrink:0;}
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(8,8,16,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px;}
 .nav-links{display:flex;gap:4px;}
-.nav-btn{
-  padding:8px 18px;border-radius:8px;
-  border:none;background:transparent;color:var(--muted);
-  font-size:.9rem;font-weight:600;cursor:pointer;
-  transition:all .2s;letter-spacing:.3px;
-}
+.nav-btn{padding:8px 18px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;}
 .nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.05);}
 .nav-btn.active{color:#fff;background:rgba(255,45,45,0.18);}
-.hamburger{
-  display:none;flex-direction:column;gap:5px;
-  cursor:pointer;padding:6px;background:none;border:none;
-}
-.hamburger span{
-  display:block;width:24px;height:2px;
-  background:var(--text);border-radius:2px;
-  transition:all .3s;
-}
-.mobile-menu{
-  display:none;position:fixed;top:64px;left:0;right:0;
-  background:rgba(8,8,16,0.98);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:12px 16px;gap:4px;flex-direction:column;
-  z-index:199;
-}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(8,8,16,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 16px;gap:4px;flex-direction:column;z-index:199;}
 .mobile-menu.open{display:flex;}
-.mobile-nav-btn{
-  padding:12px 16px;border-radius:8px;
-  border:none;background:transparent;color:var(--muted);
-  font-size:1rem;font-weight:600;cursor:pointer;
-  text-align:left;transition:all .2s;
-}
-.mobile-nav-btn:hover,.mobile-nav-btn.active{
-  color:#fff;background:rgba(255,45,45,0.15);
-}
+.mobile-nav-btn{padding:12px 16px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:1rem;font-weight:600;cursor:pointer;text-align:left;transition:all .2s;}
+.mobile-nav-btn:hover,.mobile-nav-btn.active{color:#fff;background:rgba(255,45,45,0.15);}
 
-/* ── PAGES ── */
+/* PAGES */
 .page{display:none;}
 .page.active{display:block;}
 
-/* ── HERO ── */
-.hero{
-  text-align:center;padding:72px 24px 48px;
-  position:relative;overflow:hidden;
-}
-.hero::before{
-  content:'';position:absolute;top:-120px;left:50%;
-  transform:translateX(-50%);
-  width:600px;height:600px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,45,45,0.12) 0%,transparent 70%);
-  pointer-events:none;
-}
-.hero h1{
-  font-size:clamp(2rem,5vw,3.2rem);font-weight:900;
-  line-height:1.15;margin-bottom:16px;
-}
+/* HERO */
+.hero{text-align:center;padding:72px 24px 48px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,45,45,0.12) 0%,transparent 70%);pointer-events:none;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.15;margin-bottom:16px;}
 .hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero p{font-size:1.05rem;color:var(--muted);max-width:480px;margin:0 auto 40px;}
-
-/* ── SEARCH BOX ── */
-.search-box{
-  max-width:680px;margin:0 auto 20px;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:16px;padding:6px 6px 6px 20px;
-  display:flex;align-items:center;gap:8px;
-  transition:border .2s;
-}
+.search-box{max-width:680px;margin:0 auto 20px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:6px 6px 6px 20px;display:flex;align-items:center;gap:8px;transition:border .2s;}
 .search-box:focus-within{border-color:rgba(255,45,45,0.5);}
-.search-box input{
-  flex:1;background:none;border:none;outline:none;
-  color:var(--text);font-size:1rem;padding:8px 0;
-}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:1rem;padding:8px 0;}
 .search-box input::placeholder{color:var(--muted);}
-.search-box button{
-  padding:10px 22px;border-radius:10px;border:none;
-  background:var(--grad);color:#fff;
-  font-size:.92rem;font-weight:700;cursor:pointer;
-  transition:opacity .2s;white-space:nowrap;
-}
+.search-box button{padding:10px 22px;border-radius:10px;border:none;background:var(--grad);color:#fff;font-size:.92rem;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
 .search-box button:hover{opacity:.88;}
-
-.divider{
-  text-align:center;color:var(--muted);font-size:.82rem;
-  margin:0 auto 18px;max-width:680px;
-  display:flex;align-items:center;gap:12px;
-}
-.divider::before,.divider::after{
-  content:'';flex:1;height:1px;background:var(--border);
-}
-
-.url-box{
-  max-width:680px;margin:0 auto;
-  display:flex;gap:8px;
-}
-.url-box input{
-  flex:1;padding:12px 18px;border-radius:12px;
-  border:1px solid var(--border);background:var(--bg3);
-  color:var(--text);font-size:.95rem;outline:none;
-  transition:border .2s;
-}
+.divider{text-align:center;color:var(--muted);font-size:.82rem;margin:0 auto 18px;max-width:680px;display:flex;align-items:center;gap:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.url-box{max-width:680px;margin:0 auto;display:flex;gap:8px;}
+.url-box input{flex:1;padding:12px 18px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.95rem;outline:none;transition:border .2s;}
 .url-box input:focus{border-color:rgba(255,45,45,0.4);}
 .url-box input::placeholder{color:var(--muted);}
-.url-box button{
-  padding:12px 22px;border-radius:12px;border:none;
-  background:rgba(255,255,255,0.07);color:var(--text);
-  font-size:.92rem;font-weight:600;cursor:pointer;
-  transition:background .2s;white-space:nowrap;
-}
+.url-box button{padding:12px 22px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:var(--text);font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;}
 .url-box button:hover{background:rgba(255,255,255,0.12);}
 
-/* ── LOADER ── */
-.loader{
-  display:none;text-align:center;padding:60px 20px;
-  color:var(--muted);font-size:.95rem;
-}
-.spin{
-  display:inline-block;width:40px;height:40px;
-  border:3px solid rgba(255,255,255,0.08);
-  border-top-color:var(--red);border-radius:50%;
-  animation:spin .75s linear infinite;margin-bottom:14px;
-}
+/* LOADER */
+.loader{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-size:.95rem;}
+.spin{display:inline-block;width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:14px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+.section-label{text-align:center;color:var(--muted);font-size:.82rem;letter-spacing:.5px;text-transform:uppercase;margin:0 0 28px;padding:0 16px;}
 
-/* ── SECTION LABEL ── */
-.section-label{
-  text-align:center;color:var(--muted);
-  font-size:.82rem;letter-spacing:.5px;
-  text-transform:uppercase;margin:0 0 28px;
-  padding:0 16px;
-}
-
-/* ── RESULTS GRID ── */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
-  gap:18px;max-width:1200px;
-  margin:0 auto;padding:0 16px 60px;
-}
-
-/* ── CARD ── */
-.card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;overflow:hidden;
-  transition:transform .22s,border-color .22s,box-shadow .22s;
-  cursor:default;
-}
-.card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(255,45,45,0.25);
-  box-shadow:0 12px 32px rgba(0,0,0,0.5);
-}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:18px;max-width:1200px;margin:0 auto;padding:0 16px 60px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s;}
+.card:hover{transform:translateY(-5px);border-color:rgba(255,45,45,0.25);box-shadow:0 12px 32px rgba(0,0,0,0.5);}
 .card-thumb{position:relative;overflow:hidden;}
-.card-thumb img{
-  width:100%;aspect-ratio:16/9;
-  object-fit:cover;display:block;
-  transition:transform .3s;
-}
+.card-thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;transition:transform .3s;}
 .card:hover .card-thumb img{transform:scale(1.04);}
-.card-dur{
-  position:absolute;bottom:8px;right:8px;
-  background:rgba(0,0,0,0.82);color:#fff;
-  font-size:.72rem;font-weight:700;
-  padding:3px 7px;border-radius:5px;letter-spacing:.3px;
-}
+.card-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.82);color:#fff;font-size:.72rem;font-weight:700;padding:3px 7px;border-radius:5px;}
 .card-body{padding:14px;}
-.card-title{
-  font-size:.88rem;font-weight:600;line-height:1.45;
-  margin-bottom:6px;
-  display:-webkit-box;-webkit-line-clamp:2;
-  -webkit-box-orient:vertical;overflow:hidden;
-}
-.card-meta{
-  font-size:.75rem;color:var(--muted);
-  margin-bottom:12px;
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
-}
+.card-title{font-size:.88rem;font-weight:600;line-height:1.45;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-meta{font-size:.75rem;color:var(--muted);margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .card-meta .dot{width:3px;height:3px;background:var(--muted);border-radius:50%;}
 .card-actions{display:flex;gap:8px;}
-.btn-a,.btn-v{
-  flex:1;padding:9px 0;border:none;border-radius:9px;
-  font-size:.78rem;font-weight:700;cursor:pointer;
-  transition:all .2s;display:flex;align-items:center;
-  justify-content:center;gap:5px;
-}
+.btn-a,.btn-v{flex:1;padding:9px 0;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-a{background:rgba(0,230,118,0.12);color:var(--green);}
 .btn-a:hover{background:rgba(0,230,118,0.22);}
 .btn-v{background:rgba(255,45,45,0.12);color:#ff6060;}
 .btn-v:hover{background:rgba(255,45,45,0.22);}
 
-/* ── MODAL ── */
-.overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.88);z-index:500;
-  justify-content:center;align-items:flex-end;
-  padding:0;
-}
-@media(min-width:600px){
-  .overlay{align-items:center;padding:20px;}
-}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;justify-content:center;align-items:flex-end;padding:0;}
+@media(min-width:600px){.overlay{align-items:center;padding:20px;}}
 .overlay.open{display:flex;}
-.modal{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:20px 20px 0 0;
-  width:100%;max-width:640px;
-  max-height:92vh;overflow-y:auto;
-  padding:28px 20px;position:relative;
-  animation:slideUp .25s ease;
-}
-@media(min-width:600px){
-  .modal{border-radius:20px;animation:fadeIn .2s ease;}
-}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:28px 20px;position:relative;animation:slideUp .25s ease;}
+@media(min-width:600px){.modal{border-radius:20px;animation:fadeIn .2s ease;}}
 @keyframes slideUp{from{transform:translateY(60px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 @keyframes fadeIn{from{opacity:0;transform:scale(.97);}to{opacity:1;transform:scale(1);}}
-.modal-close{
-  position:absolute;top:16px;right:16px;
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,0.08);border:none;
-  color:var(--muted);font-size:1.1rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .modal-close:hover{background:rgba(255,255,255,0.15);color:#fff;}
-.modal-thumb{
-  width:100%;border-radius:12px;
-  aspect-ratio:16/9;object-fit:cover;margin-bottom:16px;
-}
+.modal-thumb{width:100%;border-radius:12px;aspect-ratio:16/9;object-fit:cover;margin-bottom:16px;}
 .modal-title{font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.4;}
 .modal-meta{font-size:.8rem;color:var(--muted);margin-bottom:20px;}
+.modal-spin{text-align:center;padding:48px 20px;color:var(--muted);}
 
-/* ── FORMAT TABS ── */
-.fmt-tabs{
-  display:flex;gap:6px;margin-bottom:16px;
-  border-bottom:1px solid var(--border);padding-bottom:0;
-  overflow-x:auto;
-}
-.fmt-tab{
-  padding:9px 16px;border:none;background:none;
-  color:var(--muted);font-size:.82rem;font-weight:600;
-  cursor:pointer;border-bottom:2px solid transparent;
-  margin-bottom:-1px;white-space:nowrap;transition:all .2s;
-}
+/* FORMAT TABS */
+.fmt-tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);overflow-x:auto;}
+.fmt-tab{padding:9px 16px;border:none;background:none;color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .2s;}
 .fmt-tab.active{color:#fff;border-bottom-color:var(--red);}
 .fmt-tab:hover:not(.active){color:var(--text);}
-.fmt-count{
-  display:inline-flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,0.1);border-radius:10px;
-  font-size:.68rem;padding:1px 7px;margin-left:5px;
-}
+.fmt-count{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:10px;font-size:.68rem;padding:1px 7px;margin-left:5px;}
 .fmt-panel{display:none;}
 .fmt-panel.active{display:flex;flex-direction:column;gap:8px;}
 
-/* ── FORMAT ROW ── */
-.fmt-row{
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:10px;padding:12px 14px;
-  display:flex;align-items:center;gap:12px;
-  transition:border-color .2s,background .2s;
-}
-.fmt-row:hover{
-  border-color:rgba(255,45,45,0.2);
-  background:rgba(255,45,45,0.04);
-}
-.fmt-left{flex:1;min-width:0;}
-.fmt-res{
-  font-size:.9rem;font-weight:700;
-  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
-}
-.badge{
-  padding:2px 8px;border-radius:20px;
-  font-size:.65rem;font-weight:800;letter-spacing:.4px;
-  text-transform:uppercase;
-}
-.badge-c{background:rgba(156,39,176,0.25);color:#ce93d8;}
-.badge-v{background:rgba(68,138,255,0.2);color:#82b1ff;}
-.badge-a{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.badge-warn{background:rgba(255,193,7,0.15);color:#ffd54f;}
-.fmt-detail{
-  font-size:.72rem;color:var(--muted);
-  margin-top:3px;line-height:1.5;
-}
-.fmt-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
-.dl-btn{
-  padding:7px 14px;border-radius:8px;border:none;
-  font-size:.78rem;font-weight:700;cursor:pointer;
-  text-decoration:none;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:4px;
-  transition:all .2s;
-}
-.dl-video{background:rgba(68,138,255,0.18);color:#82b1ff;}
-.dl-video:hover{background:rgba(68,138,255,0.3);}
-.dl-audio{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.dl-audio:hover{background:rgba(0,230,118,0.25);}
-.dl-main{background:var(--grad);color:#fff;}
-.dl-main:hover{opacity:.88;}
+/* QUALITY ROW */
+.quality-row{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
+.quality-row:hover{border-color:rgba(255,45,45,0.25);}
+.quality-badge{width:72px;text-align:center;flex-shrink:0;}
+.quality-badge .res{font-size:1.1rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.quality-badge .fps{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.quality-info{flex:1;min-width:0;}
+.quality-info .ql{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.dl-merged{padding:10px 20px;border-radius:10px;border:none;background:var(--grad);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:opacity .2s;text-decoration:none;}
+.dl-merged:hover{opacity:.85;}
+.dl-merged.loading{opacity:.6;pointer-events:none;}
 
-/* ── AUDIO RESULT ── */
-.audio-card{
-  background:rgba(0,230,118,0.05);
-  border:1px solid rgba(0,230,118,0.2);
-  border-radius:12px;padding:20px;
-}
-.audio-card h3{
-  color:var(--green);font-size:.95rem;
-  margin-bottom:14px;display:flex;align-items:center;gap:8px;
-}
-.audio-stat-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:10px;margin-bottom:16px;
-}
+/* AUDIO FORMAT ROW */
+.fmt-row{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
+.fmt-row:hover{border-color:rgba(0,230,118,0.25);}
+.fmt-left{flex:1;min-width:0;}
+.fmt-res{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.fmt-detail{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.5;}
+.badge{padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
+.badge-a{background:rgba(0,230,118,0.15);color:#69f0ae;}
+.dl-btn{padding:8px 14px;border-radius:8px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;transition:all .2s;}
+.dl-audio-btn{background:rgba(0,230,118,0.15);color:#69f0ae;}
+.dl-audio-btn:hover{background:rgba(0,230,118,0.25);}
+
+/* AUDIO CARD */
+.audio-card{background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2);border-radius:12px;padding:20px;}
+.audio-card h3{color:var(--green);font-size:.95rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.audio-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 .audio-stat{background:rgba(0,0,0,0.25);border-radius:8px;padding:10px 12px;}
 .audio-stat label{font-size:.68rem;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px;}
 .audio-stat span{font-size:.9rem;font-weight:700;}
 
-/* ── MODAL LOADER ── */
-.modal-spin{
-  text-align:center;padding:48px 20px;color:var(--muted);
-}
+/* ERROR */
+.err-box{background:rgba(255,45,45,0.08);border:1px solid rgba(255,45,45,0.2);border-radius:10px;padding:18px;color:#ff8080;font-size:.88rem;line-height:1.6;}
 
-/* ── ERROR ── */
-.err-box{
-  background:rgba(255,45,45,0.08);
-  border:1px solid rgba(255,45,45,0.2);
-  border-radius:10px;padding:18px;color:#ff8080;
-  font-size:.88rem;line-height:1.6;
-}
-
-/* ══════════════════════════════
-   API DOCS PAGE
-══════════════════════════════ */
+/* ══ API DOCS ══ */
 .docs-wrap{max-width:880px;margin:0 auto;padding:48px 20px 80px;}
-.docs-wrap h2{
-  font-size:1.8rem;font-weight:900;margin-bottom:8px;
-}
+.docs-wrap h2{font-size:1.8rem;font-weight:900;margin-bottom:8px;}
 .docs-wrap h2 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .docs-subtitle{color:var(--muted);margin-bottom:44px;font-size:.95rem;}
-
-.endpoint-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:16px;margin-bottom:24px;overflow:hidden;
-}
-.endpoint-header{
-  padding:20px 24px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-}
-.method{
-  padding:5px 12px;border-radius:6px;
-  font-size:.75rem;font-weight:800;letter-spacing:.6px;
-}
+.endpoint-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:24px;overflow:hidden;}
+.endpoint-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.method{padding:5px 12px;border-radius:6px;font-size:.75rem;font-weight:800;letter-spacing:.6px;}
 .get{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.endpoint-path{
-  font-family:'Courier New',monospace;
-  font-size:.92rem;color:#c8d6ff;font-weight:600;
-  word-break:break-all;
-}
+.endpoint-path{font-family:'Courier New',monospace;font-size:.9rem;color:#c8d6ff;font-weight:600;word-break:break-all;}
 .endpoint-desc{color:var(--muted);font-size:.85rem;margin-left:auto;}
 .endpoint-body{padding:20px 24px;}
-.endpoint-body h4{
-  font-size:.8rem;font-weight:700;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;
-}
-
+.endpoint-body h4{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
 .params-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:20px;}
-.params-table th{
-  text-align:left;padding:8px 12px;
-  background:rgba(255,255,255,0.04);
-  border-bottom:1px solid var(--border);
-  color:var(--muted);font-weight:600;font-size:.76rem;
-}
-.params-table td{
-  padding:10px 12px;border-bottom:1px solid var(--border);
-  vertical-align:top;line-height:1.5;
-}
+.params-table th{text-align:left;padding:8px 12px;background:rgba(255,255,255,0.04);border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:.76rem;}
+.params-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
 .params-table tr:last-child td{border-bottom:none;}
 .param-name{font-family:'Courier New',monospace;color:#82b1ff;}
 .param-req{color:var(--red);font-size:.7rem;font-weight:700;}
 .param-opt{color:var(--muted);font-size:.7rem;}
-
-.code-block{
-  background:#0a0a14;border:1px solid var(--border);
-  border-radius:10px;padding:16px;
-  font-family:'Courier New',monospace;font-size:.8rem;
-  line-height:1.7;overflow-x:auto;color:#c8d6ff;
-  white-space:pre;
-}
+.code-block{background:#0a0a14;border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'Courier New',monospace;font-size:.8rem;line-height:1.7;overflow-x:auto;color:#c8d6ff;white-space:pre;}
 .code-block .k{color:#f92672;}
 .code-block .s{color:#a6e22e;}
 .code-block .n{color:#66d9ef;}
 .code-block .c{color:#75715e;}
+.tip-box{background:rgba(68,138,255,0.08);border:1px solid rgba(68,138,255,0.2);border-radius:8px;padding:14px;font-size:.83rem;color:#90caf9;line-height:1.6;margin-top:16px;}
 
-.resp-tab-row{display:flex;gap:6px;margin-bottom:12px;}
-.resp-tab{
-  padding:6px 14px;border-radius:7px;border:1px solid var(--border);
-  background:none;color:var(--muted);font-size:.78rem;
-  font-weight:600;cursor:pointer;transition:all .2s;
-}
-.resp-tab.active{background:rgba(255,45,45,0.15);color:#ff8080;border-color:rgba(255,45,45,.3);}
-
-/* ── FOOTER ── */
-footer{
-  text-align:center;padding:28px;
-  border-top:1px solid var(--border);
-  color:var(--muted);font-size:.78rem;
-}
+/* FOOTER */
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;}
 footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;}
 
-/* ── MOBILE ── */
+/* MOBILE */
 @media(max-width:600px){
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
   .hero{padding:48px 16px 32px;}
   .hero h1{font-size:1.7rem;}
   .search-box{padding:4px 4px 4px 16px;}
-  .audio-stat-grid{grid-template-columns:1fr 1fr;}
-  .card-actions{gap:6px;}
+  .quality-row{flex-wrap:wrap;}
+  .dl-merged{width:100%;justify-content:center;}
   .docs-wrap{padding:32px 14px 60px;}
   .endpoint-header{flex-direction:column;align-items:flex-start;gap:10px;}
   .endpoint-desc{margin-left:0;}
@@ -476,18 +197,13 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
 </head>
 <body>
 
-<!-- ══ NAV ══ -->
+<!-- NAV -->
 <nav>
   <div class="logo">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="7" fill="url(#g1)"/>
+      <rect width="28" height="28" rx="7" fill="url(#ng)"/>
       <polygon points="11,8 22,14 11,20" fill="white"/>
-      <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="28" y2="28">
-          <stop offset="0%" stop-color="#ff2d2d"/>
-          <stop offset="100%" stop-color="#ff6b35"/>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="ng" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#ff2d2d"/><stop offset="100%" stop-color="#ff6b35"/></linearGradient></defs>
     </svg>
     YT Downloader
   </div>
@@ -495,7 +211,7 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
     <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
     <button class="nav-btn" onclick="showPage('docs',this)">API Docs</button>
   </div>
-  <button class="hamburger" onclick="toggleMenu()" id="ham" aria-label="Menu">
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -504,86 +220,50 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
   <button class="mobile-nav-btn" onclick="showPage('docs',this,true)">📖 API Docs</button>
 </div>
 
-<!-- ══ HOME PAGE ══ -->
+<!-- HOME PAGE -->
 <div class="page active" id="page-home">
-
   <div class="hero">
-    <h1>Download YouTube<br/><span>Videos & Audio</span></h1>
-    <p>Search any video, pick your format — all qualities auto-detected. Free & fast.</p>
-
+    <h1>Download YouTube<br/><span>Videos &amp; Audio</span></h1>
+    <p>Search any video, pick your quality — merged with sound, ready to save.</p>
     <div class="search-box">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;color:#888">
-        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-        <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;color:#888"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <input type="text" id="searchInput" placeholder="Search YouTube videos…" autocomplete="off"/>
       <button onclick="doSearch()">Search</button>
     </div>
-
     <div class="divider" style="margin-top:18px;">or paste a link</div>
-
     <div class="url-box">
       <input type="text" id="directUrl" placeholder="https://youtu.be/… or youtube.com/watch?v=…"/>
-      <button onclick="loadDirect()">Load Info</button>
+      <button onclick="loadDirect()">Load</button>
     </div>
   </div>
 
-  <div class="loader" id="loader">
-    <div class="spin"></div><br/>Loading…
-  </div>
-
+  <div class="loader" id="loader"><div class="spin"></div><br/>Searching…</div>
   <p class="section-label" id="sectionLabel"></p>
   <div class="grid" id="grid"></div>
 </div>
 
-<!-- ══ DOCS PAGE ══ -->
+<!-- DOCS PAGE -->
 <div class="page" id="page-docs">
 <div class="docs-wrap">
   <h2>API <span>Documentation</span></h2>
-  <p class="docs-subtitle">All endpoints return JSON. Use these in your bots, scripts, or apps.</p>
-
-  <!-- BASE URL -->
-  <div class="endpoint-card" style="margin-bottom:32px;">
-    <div class="endpoint-header">
-      <span style="color:var(--muted);font-size:.85rem;">Base URL</span>
-      <span class="endpoint-path" style="color:#fff;">https://your-app.onrender.com</span>
-    </div>
-    <div class="endpoint-body">
-      <p style="color:var(--muted);font-size:.85rem;">Replace with your Render deployment URL. Locally it's <code style="color:#82b1ff">http://localhost:5000</code></p>
-    </div>
-  </div>
+  <p class="docs-subtitle">All endpoints return JSON. Base URL: <code style="color:#82b1ff">https://your-app.onrender.com</code></p>
 
   <!-- SEARCH -->
   <div class="endpoint-card">
     <div class="endpoint-header">
       <span class="method get">GET</span>
-      <span class="endpoint-path">/search?q={query}</span>
-      <span class="endpoint-desc">Search YouTube videos</span>
+      <span class="endpoint-path">/search?q={query}&amp;limit={n}</span>
+      <span class="endpoint-desc">Search YouTube</span>
     </div>
     <div class="endpoint-body">
       <h4>Parameters</h4>
       <table class="params-table">
         <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
         <tr><td class="param-name">q</td><td>string</td><td><span class="param-req">Required</span></td><td>Search query</td></tr>
-        <tr><td class="param-name">limit</td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Number of results (default: 12)</td></tr>
+        <tr><td class="param-name">limit</td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Results count (default: 12)</td></tr>
       </table>
-      <h4>Example Request</h4>
-      <div class="code-block">GET /search?q=lofi+music&limit=5</div>
-      <br/>
-      <h4>Example Response</h4>
-      <div class="code-block">{
-  <span class="s">"results"</span>: [
-    {
-      <span class="s">"id"</span>: <span class="s">"dQw4w9WgXcQ"</span>,
-      <span class="s">"title"</span>: <span class="s">"Never Gonna Give You Up"</span>,
-      <span class="s">"thumbnail"</span>: <span class="s">"https://i.ytimg.com/vi/..."</span>,
-      <span class="s">"duration"</span>: <span class="s">"3:33"</span>,
-      <span class="s">"channel"</span>: <span class="s">"Rick Astley"</span>,
-      <span class="s">"views"</span>: <span class="n">1400000000</span>,
-      <span class="s">"url"</span>: <span class="s">"https://www.youtube.com/watch?v=dQw4w9WgXcQ"</span>
-    }
-  ]
-}</div>
+      <h4>Response</h4>
+      <div class="code-block">{ <span class="s">"results"</span>: [{ <span class="s">"id"</span>: <span class="s">"dQw4w9WgXcQ"</span>, <span class="s">"title"</span>: <span class="s">"..."</span>, <span class="s">"thumbnail"</span>: <span class="s">"..."</span>, <span class="s">"duration"</span>: <span class="s">"3:33"</span>, <span class="s">"channel"</span>: <span class="s">"..."</span>, <span class="s">"views"</span>: <span class="n">1400000000</span>, <span class="s">"url"</span>: <span class="s">"https://youtube.com/watch?v=..."</span> }] }</div>
     </div>
   </div>
 
@@ -592,111 +272,103 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
     <div class="endpoint-header">
       <span class="method get">GET</span>
       <span class="endpoint-path">/download/audio/{youtube_url}</span>
-      <span class="endpoint-desc">Get best audio + all audio formats</span>
+      <span class="endpoint-desc">Audio stream info</span>
     </div>
     <div class="endpoint-body">
       <h4>Parameters</h4>
       <table class="params-table">
         <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL (youtu.be or youtube.com)</td></tr>
+        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL in the path</td></tr>
       </table>
-      <h4>Example Request</h4>
+      <h4>Example</h4>
       <div class="code-block">GET /download/audio/https://youtu.be/HNMP1UdjOsE</div>
       <br/>
-      <h4>Example Response</h4>
       <div class="code-block">{
   <span class="s">"status"</span>: <span class="s">"ok"</span>,
   <span class="s">"title"</span>: <span class="s">"Video Title"</span>,
-  <span class="s">"thumbnail"</span>: <span class="s">"https://..."</span>,
   <span class="s">"duration"</span>: <span class="s">"3:45"</span>,
   <span class="s">"channel"</span>: <span class="s">"Channel Name"</span>,
   <span class="s">"best_audio"</span>: {
-    <span class="s">"format_id"</span>: <span class="s">"251"</span>,
-    <span class="s">"ext"</span>: <span class="s">"webm"</span>,
-    <span class="s">"acodec"</span>: <span class="s">"opus"</span>,
-    <span class="s">"abr"</span>: <span class="n">96</span>,
+    <span class="s">"format_id"</span>: <span class="s">"251"</span>, <span class="s">"ext"</span>: <span class="s">"webm"</span>,
+    <span class="s">"acodec"</span>: <span class="s">"opus"</span>, <span class="s">"abr"</span>: <span class="n">96</span>,
     <span class="s">"filesize_human"</span>: <span class="s">"5.2 MB"</span>,
     <span class="s">"url"</span>: <span class="s">"https://googlevideo.com/..."</span>
   },
-  <span class="s">"all_audio_formats"</span>: [ <span class="c">/* array of audio format objects */</span> ]
+  <span class="s">"all_audio_formats"</span>: [<span class="c">/* array */</span>]
 }</div>
     </div>
   </div>
 
-  <!-- VIDEO -->
+  <!-- VIDEO INFO -->
   <div class="endpoint-card">
     <div class="endpoint-header">
       <span class="method get">GET</span>
       <span class="endpoint-path">/download/video/{youtube_url}</span>
-      <span class="endpoint-desc">Get all video + audio formats</span>
+      <span class="endpoint-desc">Format list + quality options</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Example</h4>
+      <div class="code-block">GET /download/video/https://youtu.be/HNMP1UdjOsE</div>
+      <br/>
+      <div class="code-block">{
+  <span class="s">"status"</span>: <span class="s">"ok"</span>,
+  <span class="s">"title"</span>: <span class="s">"..."</span>, <span class="s">"duration"</span>: <span class="s">"1:04"</span>,
+  <span class="s">"quality_options"</span>: [
+    { <span class="s">"height"</span>: <span class="n">1080</span>, <span class="s">"fps"</span>: <span class="n">24</span> },
+    { <span class="s">"height"</span>: <span class="n">720</span>,  <span class="s">"fps"</span>: <span class="n">24</span> },
+    { <span class="s">"height"</span>: <span class="n">480</span>,  <span class="s">"fps"</span>: <span class="n">24</span> }
+  ],
+  <span class="s">"formats"</span>: { <span class="s">"combined"</span>: [<span class="c">/*…*/</span>], <span class="s">"video_only"</span>: [<span class="c">/*…*/</span>], <span class="s">"audio_only"</span>: [<span class="c">/*…*/</span>] },
+  <span class="s">"formats_flat"</span>: [<span class="c">/* all formats */</span>],
+  <span class="s">"formats_count"</span>: <span class="n">23</span>
+}</div>
+    </div>
+  </div>
+
+  <!-- MERGE -->
+  <div class="endpoint-card">
+    <div class="endpoint-header">
+      <span class="method get">GET</span>
+      <span class="endpoint-path">/download/merge/{youtube_url}?height={p}</span>
+      <span class="endpoint-desc">⭐ Download merged video+audio MP4</span>
     </div>
     <div class="endpoint-body">
       <h4>Parameters</h4>
       <table class="params-table">
         <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL</td></tr>
+        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL in the path</td></tr>
+        <tr><td class="param-name">height</td><td>integer or "best"</td><td><span class="param-opt">Optional</span></td><td>Max video height: 1080, 720, 480, 360 etc. Default: best</td></tr>
       </table>
-      <h4>Response Format Structure</h4>
-      <div class="code-block">{
-  <span class="s">"status"</span>: <span class="s">"ok"</span>,
-  <span class="s">"title"</span>: <span class="s">"Video Title"</span>,
-  <span class="s">"duration"</span>: <span class="s">"1:04"</span>,
-  <span class="s">"channel"</span>: <span class="s">"Netflix"</span>,
-  <span class="s">"thumbnail"</span>: <span class="s">"https://..."</span>,
-  <span class="s">"best_audio"</span>: { <span class="c">/* best audio format object */</span> },
-  <span class="s">"formats"</span>: {
-    <span class="s">"combined"</span>: [ <span class="c">/* video+audio in one stream (360p/480p) */</span> ],
-    <span class="s">"video_only"</span>: [
-      {
-        <span class="s">"format_id"</span>: <span class="s">"137"</span>,
-        <span class="s">"resolution"</span>: <span class="s">"1920x1080"</span>,
-        <span class="s">"ext"</span>: <span class="s">"mp4"</span>,
-        <span class="s">"height"</span>: <span class="n">1080</span>,
-        <span class="s">"fps"</span>: <span class="n">24</span>,
-        <span class="s">"url"</span>: <span class="s">"https://..."</span>,           <span class="c">// video stream</span>
-        <span class="s">"audio_url"</span>: <span class="s">"https://..."</span>,     <span class="c">// best audio stream</span>
-        <span class="s">"audio_ext"</span>: <span class="s">"webm"</span>,
-        <span class="s">"has_video"</span>: <span class="k">true</span>,
-        <span class="s">"has_audio"</span>: <span class="k">false</span>
-      }
-    ],
-    <span class="s">"audio_only"</span>: [ <span class="c">/* audio-only streams */</span> ]
-  },
-  <span class="s">"formats_flat"</span>: [ <span class="c">/* all formats in one flat array */</span> ],
-  <span class="s">"formats_count"</span>: <span class="n">24</span>,
-  <span class="s">"note"</span>: <span class="s">"video_only formats include audio_url for merging"</span>
-}</div>
-      <br/>
-      <div style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.2);border-radius:8px;padding:14px;font-size:.83rem;color:#ffd54f;line-height:1.6;">
-        ⚠️ <strong>Important:</strong> YouTube serves high-quality video (720p+) as <em>video-only</em> streams. To get video with sound, use <code>url</code> + <code>audio_url</code> and merge with <strong>ffmpeg</strong>:<br/>
-        <code style="display:block;margin-top:8px;color:#fff;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;">ffmpeg -i video.mp4 -i audio.webm -c copy output.mp4</code>
+      <h4>Examples</h4>
+      <div class="code-block">GET /download/merge/https://youtu.be/HNMP1UdjOsE?height=1080
+GET /download/merge/https://youtu.be/HNMP1UdjOsE?height=720
+GET /download/merge/https://youtu.be/HNMP1UdjOsE</div>
+      <div class="tip-box">
+        ✅ This endpoint returns a <strong>binary MP4 file</strong> (Content-Disposition: attachment).<br/>
+        yt-dlp downloads the best video + best audio stream and merges them server-side with <strong>ffmpeg</strong>.<br/>
+        In your bot: <code>wget "BASE_URL/download/merge/YOUTUBE_URL?height=720" -O video.mp4</code>
       </div>
     </div>
   </div>
 
-  <!-- QUICK TEST -->
+  <!-- LIVE TEST -->
   <div class="endpoint-card">
-    <div class="endpoint-header">
-      <span style="font-weight:700;">🧪 Quick Test</span>
-    </div>
+    <div class="endpoint-header"><span style="font-weight:700;">🧪 Live API Test</span></div>
     <div class="endpoint-body">
-      <p style="color:var(--muted);font-size:.85rem;margin-bottom:14px;">Test any endpoint live:</p>
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <input type="text" id="testUrl" placeholder="YouTube URL to test…"
-          style="flex:1;min-width:200px;padding:10px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.85rem;outline:none;"/>
-        <button onclick="testAudioApi()" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(0,230,118,0.15);color:var(--green);font-weight:700;cursor:pointer;font-size:.85rem;">Test Audio</button>
-        <button onclick="testVideoApi()" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(68,138,255,0.15);color:#82b1ff;font-weight:700;cursor:pointer;font-size:.85rem;">Test Video</button>
+        <input type="text" id="testUrl" placeholder="Paste a YouTube URL…" style="flex:1;min-width:200px;padding:10px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.85rem;outline:none;"/>
+        <button onclick="testApi('audio')" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(0,230,118,0.15);color:var(--green);font-weight:700;cursor:pointer;font-size:.85rem;">Test Audio</button>
+        <button onclick="testApi('video')" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(68,138,255,0.15);color:#82b1ff;font-weight:700;cursor:pointer;font-size:.85rem;">Test Video</button>
       </div>
       <div id="testResult" style="display:none;">
-        <div class="code-block" id="testOutput" style="max-height:400px;overflow:auto;white-space:pre-wrap;word-break:break-all;"></div>
+        <div class="code-block" id="testOutput" style="max-height:400px;overflow:auto;white-space:pre-wrap;word-break:break-all;font-size:.75rem;"></div>
       </div>
     </div>
   </div>
-
 </div>
 </div>
 
-<!-- ══ MODAL ══ -->
+<!-- MODAL -->
 <div class="overlay" id="overlay" onclick="closeBg(event)">
   <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
@@ -704,86 +376,78 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
   </div>
 </div>
 
-<footer>
-  Built with <span>yt-dlp</span> · All formats auto-detected · Cookies enabled
-</footer>
+<footer>Built with <span>yt-dlp + ffmpeg</span> · Server-side merge · Cookies enabled</footer>
 
 <script>
-// ── PAGE NAV ──
-function showPage(id, btn, mobile){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.remove('active'));
+// ── PAGE NAV ──────────────────────────────────────────────────────────
+function showPage(id, btn, mobile) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if(mobile){ document.querySelectorAll('.nav-btn')[id==='home'?0:1].classList.add('active'); closeMenu(); }
-  window.scrollTo(0,0);
+  if (mobile) {
+    const idx = id === 'home' ? 0 : 1;
+    document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+    closeMenu();
+  }
+  window.scrollTo(0, 0);
 }
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
 
-// ── HAMBURGER ──
-function toggleMenu(){
-  document.getElementById('mobileMenu').classList.toggle('open');
-}
-function closeMenu(){
-  document.getElementById('mobileMenu').classList.remove('open');
-}
+// ── SEARCH ────────────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('directUrl').addEventListener('keydown', e => { if (e.key === 'Enter') loadDirect(); });
 
-// ── SEARCH ──
-document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
-document.getElementById('directUrl').addEventListener('keydown',e=>{if(e.key==='Enter')loadDirect();});
-
-function doSearch(){
-  const q=document.getElementById('searchInput').value.trim();
-  if(!q)return;
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
   setLoader(true);
-  document.getElementById('grid').innerHTML='';
-  document.getElementById('sectionLabel').textContent='';
-  fetch('/search?q='+encodeURIComponent(q))
-    .then(r=>r.json())
-    .then(d=>{
+  document.getElementById('grid').innerHTML = '';
+  document.getElementById('sectionLabel').textContent = '';
+  fetch('/search?q=' + encodeURIComponent(q))
+    .then(r => r.json())
+    .then(d => {
       setLoader(false);
-      if(d.error){setSectionLabel('Error: '+d.error);return;}
-      setSectionLabel(d.results.length+' results for "'+q+'"');
+      if (d.error) { setSectionLabel('Error: ' + d.error); return; }
+      setSectionLabel(d.results.length + ' results for "' + q + '"');
       renderCards(d.results);
     })
-    .catch(e=>{setLoader(false);setSectionLabel('Search failed: '+e.message);});
+    .catch(e => { setLoader(false); setSectionLabel('Search failed: ' + e.message); });
 }
 
-function loadDirect(){
-  const url=document.getElementById('directUrl').value.trim();
-  if(!url)return;
+function loadDirect() {
+  const url = document.getElementById('directUrl').value.trim();
+  if (!url) return;
   openVideo(url);
 }
+function setLoader(s) { document.getElementById('loader').style.display = s ? 'block' : 'none'; }
+function setSectionLabel(t) { document.getElementById('sectionLabel').textContent = t; }
 
-function setLoader(s){document.getElementById('loader').style.display=s?'block':'none';}
-function setSectionLabel(t){document.getElementById('sectionLabel').textContent=t;}
-
-// ── CARDS ──
-function renderCards(videos){
-  const g=document.getElementById('grid');
-  g.innerHTML='';
-  videos.forEach(v=>{
-    const c=document.createElement('div');
-    c.className='card';
-    c.innerHTML=`
+// ── CARDS ─────────────────────────────────────────────────────────────
+function renderCards(videos) {
+  const g = document.getElementById('grid');
+  g.innerHTML = '';
+  videos.forEach(v => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `
       <div class="card-thumb">
-        <img src="${v.thumbnail}" alt="" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22180%22><rect fill=%22%23111%22 width=%22320%22 height=%22180%22/></svg>'"/>
-        ${v.duration&&v.duration!=='N/A'?`<div class="card-dur">${esc(v.duration)}</div>`:''}
+        <img src="${v.thumbnail}" alt="" loading="lazy" onerror="this.parentElement.style.background='#111'"/>
+        ${v.duration && v.duration !== 'N/A' ? `<div class="card-dur">${esc(v.duration)}</div>` : ''}
       </div>
       <div class="card-body">
         <div class="card-title">${esc(v.title)}</div>
         <div class="card-meta">
-          <span>${esc(v.channel||'')}</span>
-          ${v.views?`<span class="dot"></span><span>${fmtViews(v.views)}</span>`:''}
+          <span>${esc(v.channel || '')}</span>
+          ${v.views ? `<span class="dot"></span><span>${fmtViews(v.views)}</span>` : ''}
         </div>
         <div class="card-actions">
-          <button class="btn-a" onclick="openAudio('${escA(v.url)}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
-            Audio
+          <button class="btn-a" onclick="openAudio('${ea(v.url)}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>Audio
           </button>
-          <button class="btn-v" onclick="openVideo('${escA(v.url)}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
-            Video
+          <button class="btn-v" onclick="openVideo('${ea(v.url)}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>Video
           </button>
         </div>
       </div>`;
@@ -791,184 +455,173 @@ function renderCards(videos){
   });
 }
 
-function fmtViews(n){
-  if(!n)return'';
-  if(n>=1e9)return(n/1e9).toFixed(1)+'B views';
-  if(n>=1e6)return(n/1e6).toFixed(1)+'M views';
-  if(n>=1e3)return(n/1e3).toFixed(0)+'K views';
-  return n+' views';
+function fmtViews(n) {
+  if (!n) return '';
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B views';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M views';
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K views';
+  return n + ' views';
 }
 
-// ── MODAL ──
-function openModal(){document.getElementById('overlay').classList.add('open');}
-function closeModal(){document.getElementById('overlay').classList.remove('open');}
-function closeBg(e){if(e.target===document.getElementById('overlay'))closeModal();}
-
-function setModalContent(html){document.getElementById('modalContent').innerHTML=html;}
-
-function spinnerHtml(color){
-  return`<div class="modal-spin"><div class="spin" style="border-top-color:${color}"></div><br/>Fetching formats…</div>`;
+// ── MODAL ─────────────────────────────────────────────────────────────
+function openModal()  { document.getElementById('overlay').classList.add('open'); }
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function closeBg(e)   { if (e.target === document.getElementById('overlay')) closeModal(); }
+function setMC(html)  { document.getElementById('modalContent').innerHTML = html; }
+function spinHtml(c)  {
+  return `<div class="modal-spin"><div class="spin" style="border-top-color:${c}"></div><br/>Fetching info…</div>`;
 }
 
-// ── AUDIO MODAL ──
-function openAudio(url){
+// ── AUDIO MODAL ───────────────────────────────────────────────────────
+function openAudio(url) {
   openModal();
-  setModalContent(spinnerHtml('var(--green)'));
-  fetch('/download/audio/'+encodeURIComponent(url))
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.status==='error'){setModalContent(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
-      const b=d.best_audio;
-      const all=d.all_audio_formats||[];
-
-      let allRows='';
-      all.forEach(f=>{
-        const detail=[f.ext,f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,f.abr?f.abr+' kbps':null,f.filesize_human].filter(Boolean).join(' · ');
-        allRows+=`<div class="fmt-row">
+  setMC(spinHtml('var(--green)'));
+  fetch('/download/audio/' + encodeURIComponent(url))
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === 'error') { setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`); return; }
+      const b   = d.best_audio;
+      const all = d.all_audio_formats || [];
+      let rows  = '';
+      all.forEach(f => {
+        const det = [f.ext, f.acodec && f.acodec !== 'none' ? f.acodec.split('.')[0] : null, f.abr ? f.abr + ' kbps' : null, f.filesize_human].filter(Boolean).join(' · ');
+        rows += `<div class="fmt-row">
           <div class="fmt-left">
-            <div class="fmt-res"><span class="badge badge-a">Audio</span>${esc(f.abr?f.abr+' kbps':'—')}</div>
-            <div class="fmt-detail">${esc(detail)}</div>
+            <div class="fmt-res"><span class="badge badge-a">Audio</span>${esc(f.abr ? f.abr + ' kbps' : '—')}</div>
+            <div class="fmt-detail">${esc(det)}</div>
           </div>
-          <div class="fmt-actions">
-            <a class="dl-btn dl-main" href="${f.url}" target="_blank">⬇ Download</a>
+          <a class="dl-btn dl-audio-btn" href="${f.url}" target="_blank">⬇ Download</a>
+        </div>`;
+      });
+      setMC(`
+        <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
+        <div class="modal-title">${esc(d.title)}</div>
+        <div class="modal-meta">${esc(d.channel || '')} · ${d.duration}</div>
+        <div class="audio-card" style="margin-bottom:${all.length > 1 ? '20px' : '0'}">
+          <h3>🎵 Best Audio</h3>
+          <div class="audio-stat-grid">
+            <div class="audio-stat"><label>Format</label><span>${esc(b.format_id)}</span></div>
+            <div class="audio-stat"><label>Codec</label><span>${esc(b.acodec || '—')}</span></div>
+            <div class="audio-stat"><label>Bitrate</label><span>${b.abr ? b.abr + ' kbps' : '—'}</span></div>
+            <div class="audio-stat"><label>Size</label><span>${b.filesize_human || '—'}</span></div>
           </div>
+          <a class="dl-merged" href="${b.url}" target="_blank" style="width:100%;justify-content:center;">
+            ⬇ Download Best Audio (.${b.ext})
+          </a>
+        </div>
+        ${all.length > 1 ? `<div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:4px;">All Audio Formats</div><div style="display:flex;flex-direction:column;gap:7px;">${rows}</div>` : ''}
+      `);
+    })
+    .catch(e => setMC(`<div class="err-box">❌ ${e.message}</div>`));
+}
+
+// ── VIDEO MODAL ───────────────────────────────────────────────────────
+function openVideo(url) {
+  openModal();
+  setMC(spinHtml('var(--red)'));
+  fetch('/download/video/' + encodeURIComponent(url))
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === 'error') { setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`); return; }
+
+      const qualities = d.quality_options || [];
+      const aonly     = (d.formats && d.formats.audio_only) || [];
+
+      // Quality rows — each triggers server-side merge
+      let qRows = '';
+      if (qualities.length === 0) {
+        qRows = '<p style="color:var(--muted);font-size:.85rem;">No video formats found.</p>';
+      } else {
+        qualities.forEach(q => {
+          const label = q.height >= 1080 ? 'Full HD' : q.height >= 720 ? 'HD' : q.height >= 480 ? 'SD' : 'Low';
+          const mergeUrl = `/download/merge/${encodeURIComponent(url)}?height=${q.height}`;
+          qRows += `
+            <div class="quality-row">
+              <div class="quality-badge">
+                <div class="res">${q.height}p</div>
+                <div class="fps">${q.fps ? q.fps + ' fps' : ''}</div>
+              </div>
+              <div class="quality-info">
+                <div class="ql">${label} · MP4 · Video + Audio merged</div>
+              </div>
+              <a class="dl-merged" href="${mergeUrl}" id="dl-${q.height}"
+                onclick="startDl(this)" download>
+                ⬇ Download
+              </a>
+            </div>`;
+        });
+      }
+
+      // Audio-only rows
+      let aRows = '';
+      aonly.forEach(f => {
+        const det = [f.ext, f.acodec && f.acodec !== 'none' ? f.acodec.split('.')[0] : null, f.abr ? f.abr + ' kbps' : null, f.filesize_human].filter(Boolean).join(' · ');
+        aRows += `<div class="fmt-row">
+          <div class="fmt-left">
+            <div class="fmt-res"><span class="badge badge-a">Audio</span>${esc(f.abr ? f.abr + ' kbps' : '—')}</div>
+            <div class="fmt-detail">${esc(det)}</div>
+          </div>
+          <a class="dl-btn dl-audio-btn" href="${f.url}" target="_blank">⬇ Download</a>
         </div>`;
       });
 
-      setModalContent(`
+      setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
-        <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
-        <div class="audio-card" style="margin-bottom:20px;">
-          <h3>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
-            Best Audio
-          </h3>
-          <div class="audio-stat-grid">
-            <div class="audio-stat"><label>Format</label><span>${esc(b.format_id)}</span></div>
-            <div class="audio-stat"><label>Codec</label><span>${esc(b.acodec||'—')}</span></div>
-            <div class="audio-stat"><label>Bitrate</label><span>${b.abr?b.abr+' kbps':'—'}</span></div>
-            <div class="audio-stat"><label>Size</label><span>${b.filesize_human||'—'}</span></div>
-          </div>
-          <a class="dl-btn dl-main" href="${b.url}" target="_blank" style="width:100%;justify-content:center;padding:11px;">⬇ Download Best Audio (.${b.ext})</a>
-        </div>
-        ${all.length>1?`
-          <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">All Audio Formats</div>
-          <div style="display:flex;flex-direction:column;gap:7px;">${allRows}</div>
-        `:''}
-      `);
-    })
-    .catch(e=>setModalContent(`<div class="err-box">❌ ${e.message}</div>`));
-}
-
-// ── VIDEO MODAL ──
-function openVideo(url){
-  openModal();
-  setModalContent(spinnerHtml('var(--red)'));
-  fetch('/download/video/'+encodeURIComponent(url))
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.status==='error'){setModalContent(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
-      const combined=d.formats.combined||[];
-      const vonly=d.formats.video_only||[];
-      const aonly=d.formats.audio_only||[];
-
-      function fmtRow(f,type){
-        const detail=[
-          f.ext,
-          f.fps?f.fps+'fps':null,
-          f.vcodec&&f.vcodec!=='none'?f.vcodec.split('.')[0]:null,
-          f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,
-          f.abr?f.abr+' kbps':null,
-          f.filesize_human
-        ].filter(Boolean).join(' · ');
-
-        let badge='',actions='';
-        if(type==='combined'){
-          badge=`<span class="badge badge-c">Video+Audio</span>`;
-          actions=`<a class="dl-btn dl-main" href="${f.url}" target="_blank">⬇ Download</a>`;
-        } else if(type==='video'){
-          badge=`<span class="badge badge-v">Video</span>`;
-          actions=`<a class="dl-btn dl-video" href="${f.url}" target="_blank">⬇ Video</a>`;
-          if(f.audio_url){
-            actions+=`<a class="dl-btn dl-audio" href="${f.audio_url}" target="_blank">⬇ Audio</a>`;
-          }
-        } else {
-          badge=`<span class="badge badge-a">Audio</span>`;
-          actions=`<a class="dl-btn dl-audio" href="${f.url}" target="_blank">⬇ Download</a>`;
-        }
-
-        return`<div class="fmt-row">
-          <div class="fmt-left">
-            <div class="fmt-res">${badge}${esc(f.resolution)}</div>
-            <div class="fmt-detail">${esc(detail)}</div>
-          </div>
-          <div class="fmt-actions">${actions}</div>
-        </div>`;
-      }
-
-      const cHtml=combined.map(f=>fmtRow(f,'combined')).join('');
-      const vHtml=vonly.map(f=>fmtRow(f,'video')).join('');
-      const aHtml=aonly.map(f=>fmtRow(f,'audio')).join('');
-
-      const note=vonly.length>0?`
-        <div style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.2);border-radius:8px;padding:10px 12px;font-size:.76rem;color:#ffd54f;line-height:1.5;margin-bottom:14px;">
-          ⚠️ High-quality formats have separate video & audio streams. Download both and merge with ffmpeg for sound.
-        </div>`:'';
-
-      setModalContent(`
-        <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
-        <div class="modal-title">${esc(d.title)}</div>
-        <div class="modal-meta">${esc(d.channel||'')} · ${d.duration} · ${d.formats_count} formats</div>
+        <div class="modal-meta">${esc(d.channel || '')} · ${d.duration}</div>
 
         <div class="fmt-tabs">
-          ${combined.length?`<button class="fmt-tab active" onclick="switchTab(this,'tab-c')">Combined<span class="fmt-count">${combined.length}</span></button>`:''}
-          ${vonly.length?`<button class="fmt-tab ${!combined.length?'active':''}" onclick="switchTab(this,'tab-v')">Video Only<span class="fmt-count">${vonly.length}</span></button>`:''}
-          ${aonly.length?`<button class="fmt-tab" onclick="switchTab(this,'tab-a')">Audio Only<span class="fmt-count">${aonly.length}</span></button>`:''}
+          <button class="fmt-tab active" onclick="switchTab(this,'tab-video')">
+            🎬 Video Quality <span class="fmt-count">${qualities.length}</span>
+          </button>
+          ${aonly.length ? `<button class="fmt-tab" onclick="switchTab(this,'tab-audio')">🎵 Audio Only <span class="fmt-count">${aonly.length}</span></button>` : ''}
         </div>
 
-        ${combined.length?`<div class="fmt-panel active" id="tab-c"><div style="display:flex;flex-direction:column;gap:7px;">${cHtml}</div></div>`:''}
-        <div class="fmt-panel ${!combined.length&&vonly.length?'active':''}" id="tab-v">
-          ${note}
-          <div style="display:flex;flex-direction:column;gap:7px;">${vHtml}</div>
+        <div class="fmt-panel active" id="tab-video">
+          <div style="display:flex;flex-direction:column;gap:8px;">${qRows}</div>
+          <div style="margin-top:12px;background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:8px;padding:10px 14px;font-size:.76rem;color:#69f0ae;line-height:1.6;">
+            ✅ All qualities include audio — merged server-side with ffmpeg before download.
+          </div>
         </div>
-        <div class="fmt-panel" id="tab-a">
-          <div style="display:flex;flex-direction:column;gap:7px;">${aHtml}</div>
-        </div>
+        ${aonly.length ? `<div class="fmt-panel" id="tab-audio"><div style="display:flex;flex-direction:column;gap:7px;">${aRows}</div></div>` : ''}
       `);
     })
-    .catch(e=>setModalContent(`<div class="err-box">❌ ${e.message}</div>`));
+    .catch(e => setMC(`<div class="err-box">❌ ${e.message}</div>`));
 }
 
-function switchTab(btn,panelId){
-  btn.closest('.modal').querySelectorAll('.fmt-tab').forEach(t=>t.classList.remove('active'));
-  btn.closest('.modal').querySelectorAll('.fmt-panel').forEach(p=>p.classList.remove('active'));
+function startDl(el) {
+  el.classList.add('loading');
+  el.textContent = '⏳ Merging…';
+  // Re-enable after 3 minutes
+  setTimeout(() => {
+    el.classList.remove('loading');
+    el.innerHTML = '⬇ Download';
+  }, 180000);
+}
+
+function switchTab(btn, panelId) {
+  btn.closest('.modal').querySelectorAll('.fmt-tab').forEach(t => t.classList.remove('active'));
+  btn.closest('.modal').querySelectorAll('.fmt-panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
 
-// ── API TEST ──
-function testAudioApi(){
-  const u=document.getElementById('testUrl').value.trim();
-  if(!u)return;
-  runTest('/download/audio/'+encodeURIComponent(u));
-}
-function testVideoApi(){
-  const u=document.getElementById('testUrl').value.trim();
-  if(!u)return;
-  runTest('/download/video/'+encodeURIComponent(u));
-}
-function runTest(path){
-  const out=document.getElementById('testOutput');
-  const res=document.getElementById('testResult');
-  res.style.display='block';
-  out.textContent='Loading…';
-  fetch(path).then(r=>r.json()).then(d=>{ out.textContent=JSON.stringify(d,null,2); }).catch(e=>{ out.textContent='Error: '+e.message; });
+// ── API TEST ──────────────────────────────────────────────────────────
+function testApi(type) {
+  const u = document.getElementById('testUrl').value.trim();
+  if (!u) return;
+  const path = type === 'audio'
+    ? '/download/audio/' + encodeURIComponent(u)
+    : '/download/video/' + encodeURIComponent(u);
+  const out = document.getElementById('testOutput');
+  document.getElementById('testResult').style.display = 'block';
+  out.textContent = 'Loading…';
+  fetch(path).then(r => r.json()).then(d => { out.textContent = JSON.stringify(d, null, 2); }).catch(e => { out.textContent = 'Error: ' + e.message; });
 }
 
-// ── UTILS ──
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function escA(s){return String(s||'').replace(/'/g,"\\'");}
+// ── UTILS ─────────────────────────────────────────────────────────────
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ea(s)  { return String(s || '').replace(/'/g, "\\'"); }
 </script>
 </body>
 </html>
