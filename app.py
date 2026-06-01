@@ -16,10 +16,10 @@ os.makedirs(TMP_DIR, exist_ok=True)
 
 def get_ydl_opts_base():
     return {
-        "cookiefile": COOKIES_FILE,
-        "quiet": True,
-        "no_warnings": True,
-        "skip_download": True,
+        "cookiefile":      COOKIES_FILE,
+        "quiet":           True,
+        "no_warnings":     True,
+        "skip_download":   True,
         "ffmpeg_location": FFMPEG_PATH,
     }
 
@@ -69,25 +69,25 @@ def parse_formats(info):
         width     = fmt.get("width")
 
         entry = {
-            "format_id":    fid,
-            "ext":          fmt.get("ext"),
-            "resolution":   fmt.get("resolution") or (
+            "format_id":      fid,
+            "ext":            fmt.get("ext"),
+            "resolution":     fmt.get("resolution") or (
                 f"{width}x{height}" if width and height else "audio only"
             ),
-            "height":       height,
-            "width":        width,
-            "fps":          fmt.get("fps"),
-            "vcodec":       vcodec,
-            "acodec":       acodec,
-            "abr":          fmt.get("abr") or 0,
-            "vbr":          fmt.get("vbr"),
-            "filesize":     fmt.get("filesize") or fmt.get("filesize_approx"),
+            "height":         height,
+            "width":          width,
+            "fps":            fmt.get("fps"),
+            "vcodec":         vcodec,
+            "acodec":         acodec,
+            "abr":            fmt.get("abr") or 0,
+            "vbr":            fmt.get("vbr"),
+            "filesize":       fmt.get("filesize") or fmt.get("filesize_approx"),
             "filesize_human": format_filesize(fmt.get("filesize") or fmt.get("filesize_approx")),
-            "url":          fmt.get("url"),
-            "has_video":    has_video,
-            "has_audio":    has_audio,
-            "format_note":  fmt.get("format_note") or "",
-            "tbr":          fmt.get("tbr"),
+            "url":            fmt.get("url"),
+            "has_video":      has_video,
+            "has_audio":      has_audio,
+            "format_note":    fmt.get("format_note") or "",
+            "tbr":            fmt.get("tbr"),
         }
 
         if has_video and has_audio:
@@ -100,23 +100,21 @@ def parse_formats(info):
     combined.sort(key=lambda x: x.get("height") or 0, reverse=True)
     video_only.sort(key=lambda x: x.get("height") or 0, reverse=True)
     audio_only.sort(key=lambda x: x.get("abr") or 0, reverse=True)
-
     return combined, video_only, audio_only
 
 
-# ── Unique heights available for merge ─────────────────────────────────
 def get_quality_options(combined, video_only):
     heights = {}
     for f in combined + video_only:
         h = f.get("height")
         if h and h not in heights:
             heights[h] = f.get("fps")
-    return sorted(heights.items(), reverse=True)   # [(1080,24),(720,30),...]
+    return sorted(heights.items(), reverse=True)
 
 
-# ═══════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════
 #  ROUTES
-# ═══════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════
 
 @app.route("/")
 def index():
@@ -157,17 +155,21 @@ def search():
         return jsonify({"error": str(e)}), 500
 
 
+# ── /download/audio/<link>
+#    Returns JSON with all available audio formats.
 @app.route("/download/audio/<path:link>")
 def download_audio(link):
     url = link if link.startswith("http") else f"https://{link}"
     try:
-        opts          = get_ydl_opts_base()
+        opts           = get_ydl_opts_base()
         opts["format"] = "bestaudio/best"
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(url, download=False)
+
         fmts = info.get("requested_formats") or [info]
         fmt  = fmts[0]
         _, _, audio_only = parse_formats(info)
+
         return jsonify({
             "status":   "ok",
             "title":    info.get("title"),
@@ -175,13 +177,13 @@ def download_audio(link):
             "duration": format_duration(info.get("duration")),
             "channel":  info.get("uploader"),
             "best_audio": {
-                "format_id":     fmt.get("format_id"),
-                "ext":           fmt.get("ext"),
-                "acodec":        fmt.get("acodec"),
-                "abr":           fmt.get("abr"),
-                "filesize":      fmt.get("filesize") or fmt.get("filesize_approx"),
-                "filesize_human":format_filesize(fmt.get("filesize") or fmt.get("filesize_approx")),
-                "url":           fmt.get("url"),
+                "format_id":      fmt.get("format_id"),
+                "ext":            fmt.get("ext"),
+                "acodec":         fmt.get("acodec"),
+                "abr":            fmt.get("abr"),
+                "filesize":       fmt.get("filesize") or fmt.get("filesize_approx"),
+                "filesize_human": format_filesize(fmt.get("filesize") or fmt.get("filesize_approx")),
+                "url":            fmt.get("url"),
             },
             "all_audio_formats": audio_only,
         })
@@ -189,22 +191,87 @@ def download_audio(link):
         return jsonify({"status": "error", "error": str(e)}), 500
 
 
+# ── /download/video/<link>
+#    • Without ?height=  → JSON with all formats (combined / video_only / audio_only)
+#    • With    ?height=N → Downloads merged Video+Audio MP4 file directly
 @app.route("/download/video/<path:link>")
 def download_video(link):
-    url = link if link.startswith("http") else f"https://{link}"
+    url    = link if link.startswith("http") else f"https://{link}"
+    height = request.args.get("height", "").strip()
+
+    # ── DOWNLOAD MODE (height param present) ──────────────────────────
+    if height:
+        fmt_selector = (f"bestvideo[height<={height}]+bestaudio/best"
+                        if height != "best"
+                        else "bestvideo+bestaudio/best")
+
+        session_id = uuid.uuid4().hex
+        out_tmpl   = os.path.join(TMP_DIR, f"{session_id}.%(ext)s")
+        out_mp4    = os.path.join(TMP_DIR, f"{session_id}.mp4")
+
+        try:
+            opts = {
+                "cookiefile":          COOKIES_FILE,
+                "quiet":               True,
+                "no_warnings":         True,
+                "format":              fmt_selector,
+                "outtmpl":             out_tmpl,
+                "ffmpeg_location":     FFMPEG_PATH,
+                "merge_output_format": "mp4",
+                "postprocessors":      [{
+                    "key":            "FFmpegVideoConvertor",
+                    "preferedformat": "mp4",
+                }],
+            }
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+
+            title      = info.get("title", "video")
+            safe_title = "".join(c for c in title if c.isalnum() or c in " _-")[:60].strip() or "video"
+            dl_name    = f"{safe_title}_{height}p.mp4"
+
+            if not os.path.exists(out_mp4):
+                possible = [f for f in os.listdir(TMP_DIR) if f.startswith(session_id)]
+                if possible:
+                    out_mp4 = os.path.join(TMP_DIR, possible[0])
+                else:
+                    return jsonify({"status": "error", "error": "Output file not found after merge"}), 500
+
+            def cleanup(path):
+                try: os.remove(path)
+                except: pass
+
+            @after_this_request
+            def remove_file(response):
+                threading.Thread(target=cleanup, args=(out_mp4,), daemon=True).start()
+                return response
+
+            return send_file(out_mp4, as_attachment=True,
+                             download_name=dl_name, mimetype="video/mp4")
+
+        except Exception as e:
+            for f in os.listdir(TMP_DIR):
+                if f.startswith(session_id):
+                    try: os.remove(os.path.join(TMP_DIR, f))
+                    except: pass
+            return jsonify({"status": "error", "error": str(e)}), 500
+
+    # ── INFO MODE (no height param) ───────────────────────────────────
     try:
         opts = get_ydl_opts_base()
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(url, download=False)
+
         combined, video_only, audio_only = parse_formats(info)
         quality_options = get_quality_options(combined, video_only)
+
         return jsonify({
-            "status":         "ok",
-            "title":          info.get("title"),
-            "thumbnail":      info.get("thumbnail"),
-            "duration":       format_duration(info.get("duration")),
-            "channel":        info.get("uploader"),
-            "description":    (info.get("description") or "")[:300],
+            "status":          "ok",
+            "title":           info.get("title"),
+            "thumbnail":       info.get("thumbnail"),
+            "duration":        format_duration(info.get("duration")),
+            "channel":         info.get("uploader"),
+            "description":     (info.get("description") or "")[:300],
             "quality_options": [{"height": h, "fps": f} for h, f in quality_options],
             "formats": {
                 "combined":   combined,
@@ -213,84 +280,9 @@ def download_video(link):
             },
             "formats_flat":   combined + video_only + audio_only,
             "formats_count":  len(combined) + len(video_only) + len(audio_only),
-            "note": "Use /download/merge/<url>?height=1080 to get a merged video+audio file.",
+            "note": "Add ?height=1080 (or 720/480/360) to download a merged Video+Audio MP4 file.",
         })
     except Exception as e:
-        return jsonify({"status": "error", "error": str(e)}), 500
-
-
-@app.route("/download/merge/<path:link>")
-def download_merge(link):
-    """
-    Downloads best video at given height + best audio,
-    merges with ffmpeg, streams merged MP4 back to client.
-    """
-    url    = link if link.startswith("http") else f"https://{link}"
-    height = request.args.get("height", "best")
-
-    if height == "best":
-        fmt_selector = "bestvideo+bestaudio/best"
-    else:
-        fmt_selector = f"bestvideo[height<={height}]+bestaudio/best"
-
-    session_id = uuid.uuid4().hex
-    out_tmpl   = os.path.join(TMP_DIR, f"{session_id}.%(ext)s")
-    out_mp4    = os.path.join(TMP_DIR, f"{session_id}.mp4")
-
-    try:
-        opts = {
-            "cookiefile":      COOKIES_FILE,
-            "quiet":           True,
-            "no_warnings":     True,
-            "format":          fmt_selector,
-            "outtmpl":         out_tmpl,
-            "ffmpeg_location": FFMPEG_PATH,
-            "postprocessors":  [{
-                "key":             "FFmpegVideoConvertor",
-                "preferedformat":  "mp4",
-            }],
-            "merge_output_format": "mp4",
-        }
-
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-
-        title    = info.get("title", "video")
-        safe_title = "".join(c for c in title if c.isalnum() or c in " _-")[:60].strip() or "video"
-        dl_name  = f"{safe_title}_{height}p.mp4"
-
-        if not os.path.exists(out_mp4):
-            possible = [f for f in os.listdir(TMP_DIR) if f.startswith(session_id)]
-            if possible:
-                out_mp4 = os.path.join(TMP_DIR, possible[0])
-            else:
-                return jsonify({"status": "error", "error": "Merge failed — output file not found"}), 500
-
-        def cleanup(path):
-            try:
-                os.remove(path)
-            except Exception:
-                pass
-
-        @after_this_request
-        def remove_file(response):
-            t = threading.Thread(target=cleanup, args=(out_mp4,))
-            t.daemon = True
-            t.start()
-            return response
-
-        return send_file(
-            out_mp4,
-            as_attachment=True,
-            download_name=dl_name,
-            mimetype="video/mp4",
-        )
-
-    except Exception as e:
-        for f in os.listdir(TMP_DIR):
-            if f.startswith(session_id):
-                try: os.remove(os.path.join(TMP_DIR, f))
-                except: pass
         return jsonify({"status": "error", "error": str(e)}), 500
 
 

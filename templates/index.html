@@ -3,236 +3,495 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>YT Downloader — Premium</title>
+<title>YT Downloader</title>
 <style>
-:root {
-  --red: #ff2d2d;
-  --red2: #ff6b35;
-  --green: #00e676;
-  --blue: #448aff;
-  --bg: #080810;
-  --bg2: #0e0e1a;
-  --bg3: #14141f;
-  --card: #12121e;
-  --border: rgba(255,255,255,0.07);
-  --text: #f0f0f8;
-  --muted: #8888aa;
-  --grad: linear-gradient(135deg, #ff2d2d, #ff6b35);
+:root{
+  --red:#ff2d2d;--red2:#ff6b35;--green:#00e676;--blue:#448aff;
+  --bg:#080810;--bg2:#0e0e1a;--bg3:#13131f;--card:#111120;
+  --border:rgba(255,255,255,0.07);--text:#f0f0f8;--muted:#7878a0;
+  --grad:linear-gradient(135deg,#ff2d2d,#ff6b35);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-::-webkit-scrollbar{width:6px;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:var(--bg2);}
-::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
+::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:3px;}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:200;background:rgba(8,8,16,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;}
-.logo{display:flex;align-items:center;gap:10px;font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px;}
-.nav-links{display:flex;gap:4px;}
-.nav-btn{padding:8px 18px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;}
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:300;
+  background:rgba(8,8,16,0.92);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  height:60px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{
+  display:flex;align-items:center;gap:9px;
+  font-size:1.15rem;font-weight:800;letter-spacing:.4px;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-links{display:flex;gap:2px;}
+.nav-btn{
+  padding:7px 16px;border-radius:8px;border:none;
+  background:transparent;color:var(--muted);
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;
+}
 .nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.05);}
-.nav-btn.active{color:#fff;background:rgba(255,45,45,0.18);}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;}
-.hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
-.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(8,8,16,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 16px;gap:4px;flex-direction:column;z-index:199;}
+.nav-btn.active{color:#fff;background:rgba(255,45,45,0.15);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:5px;background:none;border:none;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
+.mobile-menu{
+  display:none;position:fixed;top:60px;left:0;right:0;z-index:299;
+  background:rgba(8,8,16,0.98);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px;flex-direction:column;gap:3px;
+}
 .mobile-menu.open{display:flex;}
-.mobile-nav-btn{padding:12px 16px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:1rem;font-weight:600;cursor:pointer;text-align:left;transition:all .2s;}
-.mobile-nav-btn:hover,.mobile-nav-btn.active{color:#fff;background:rgba(255,45,45,0.15);}
+.mobile-nav-btn{padding:11px 14px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:.95rem;font-weight:600;cursor:pointer;text-align:left;transition:all .2s;}
+.mobile-nav-btn:hover,.mobile-nav-btn.active{color:#fff;background:rgba(255,45,45,0.13);}
 
-/* PAGES */
+/* ── PAGES ── */
 .page{display:none;}
 .page.active{display:block;}
 
-/* HERO */
-.hero{text-align:center;padding:72px 24px 48px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,45,45,0.12) 0%,transparent 70%);pointer-events:none;}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.15;margin-bottom:16px;}
-.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero p{font-size:1.05rem;color:var(--muted);max-width:480px;margin:0 auto 40px;}
-.search-box{max-width:680px;margin:0 auto 20px;background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:6px 6px 6px 20px;display:flex;align-items:center;gap:8px;transition:border .2s;}
-.search-box:focus-within{border-color:rgba(255,45,45,0.5);}
-.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:1rem;padding:8px 0;}
-.search-box input::placeholder{color:var(--muted);}
-.search-box button{padding:10px 22px;border-radius:10px;border:none;background:var(--grad);color:#fff;font-size:.92rem;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap;}
-.search-box button:hover{opacity:.88;}
-.divider{text-align:center;color:var(--muted);font-size:.82rem;margin:0 auto 18px;max-width:680px;display:flex;align-items:center;gap:12px;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.url-box{max-width:680px;margin:0 auto;display:flex;gap:8px;}
-.url-box input{flex:1;padding:12px 18px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.95rem;outline:none;transition:border .2s;}
-.url-box input:focus{border-color:rgba(255,45,45,0.4);}
-.url-box input::placeholder{color:var(--muted);}
-.url-box button{padding:12px 22px;border-radius:12px;border:none;background:rgba(255,255,255,0.07);color:var(--text);font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap;}
-.url-box button:hover{background:rgba(255,255,255,0.12);}
+/* ── HERO ── */
+.hero{
+  text-align:center;padding:64px 20px 40px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(255,45,45,0.1) 0%,transparent 70%);
+}
+.hero h1{
+  font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;
+  line-height:1.18;margin-bottom:12px;position:relative;
+}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{
+  font-size:.97rem;color:var(--muted);
+  max-width:420px;margin:0 auto 36px;line-height:1.6;position:relative;
+}
 
-/* LOADER */
-.loader{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-size:.95rem;}
-.spin{display:inline-block;width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:14px;}
+/* ── SEARCH BAR ── */
+.search-wrap{
+  max-width:520px;margin:0 auto 16px;position:relative;
+}
+.search-row{
+  display:flex;align-items:center;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-row:focus-within{
+  border-color:rgba(255,45,45,0.45);
+  box-shadow:0 0 0 3px rgba(255,45,45,0.08);
+}
+.search-row svg{flex-shrink:0;margin-left:16px;color:var(--muted);}
+.search-row input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-size:.95rem;padding:13px 12px;
+}
+.search-row input::placeholder{color:var(--muted);}
+.search-row button{
+  flex-shrink:0;padding:10px 20px;border:none;
+  background:var(--grad);color:#fff;
+  font-size:.88rem;font-weight:700;cursor:pointer;
+  transition:opacity .2s;height:100%;border-radius:0;
+}
+.search-row button:hover{opacity:.85;}
+
+/* ── URL INPUT ── */
+.url-divider{
+  display:flex;align-items:center;gap:10px;
+  max-width:520px;margin:0 auto 14px;
+  color:var(--muted);font-size:.78rem;
+}
+.url-divider::before,.url-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.url-row{max-width:520px;margin:0 auto;display:flex;gap:8px;}
+.url-row input{
+  flex:1;padding:11px 16px;border-radius:11px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text);font-size:.9rem;outline:none;transition:border .2s;
+}
+.url-row input:focus{border-color:rgba(255,45,45,0.35);}
+.url-row input::placeholder{color:var(--muted);}
+.url-row button{
+  padding:11px 20px;border-radius:11px;border:none;
+  background:rgba(255,255,255,0.07);color:var(--text);
+  font-size:.88rem;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:background .2s;
+}
+.url-row button:hover{background:rgba(255,255,255,0.12);}
+
+/* ── LOADER ── */
+.loader{display:none;text-align:center;padding:56px 20px;color:var(--muted);}
+.spin{
+  display:inline-block;width:38px;height:38px;
+  border:3px solid rgba(255,255,255,0.07);border-top-color:var(--red);
+  border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;
+}
 @keyframes spin{to{transform:rotate(360deg);}}
-.section-label{text-align:center;color:var(--muted);font-size:.82rem;letter-spacing:.5px;text-transform:uppercase;margin:0 0 28px;padding:0 16px;}
+.section-label{
+  text-align:center;color:var(--muted);font-size:.78rem;
+  letter-spacing:.5px;text-transform:uppercase;margin:0 0 24px;padding:0 16px;
+}
 
-/* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:18px;max-width:1200px;margin:0 auto;padding:0 16px 60px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s;}
-.card:hover{transform:translateY(-5px);border-color:rgba(255,45,45,0.25);box-shadow:0 12px 32px rgba(0,0,0,0.5);}
-.card-thumb{position:relative;overflow:hidden;}
-.card-thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;transition:transform .3s;}
-.card:hover .card-thumb img{transform:scale(1.04);}
-.card-dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.82);color:#fff;font-size:.72rem;font-weight:700;padding:3px 7px;border-radius:5px;}
-.card-body{padding:14px;}
-.card-title{font-size:.88rem;font-weight:600;line-height:1.45;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.card-meta{font-size:.75rem;color:var(--muted);margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.card-meta .dot{width:3px;height:3px;background:var(--muted);border-radius:50%;}
-.card-actions{display:flex;gap:8px;}
-.btn-a,.btn-v{flex:1;padding:9px 0;border:none;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
-.btn-a{background:rgba(0,230,118,0.12);color:var(--green);}
-.btn-a:hover{background:rgba(0,230,118,0.22);}
-.btn-v{background:rgba(255,45,45,0.12);color:#ff6060;}
-.btn-v:hover{background:rgba(255,45,45,0.22);}
+/* ── RESULTS GRID ── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;max-width:1180px;margin:0 auto;padding:0 16px 64px;
+}
 
-/* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;justify-content:center;align-items:flex-end;padding:0;}
+/* ── VIDEO CARD ── */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  transition:transform .22s,border-color .22s,box-shadow .22s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,45,45,0.22);
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+.thumb{position:relative;overflow:hidden;}
+.thumb img{
+  width:100%;aspect-ratio:16/9;object-fit:cover;
+  display:block;transition:transform .3s;
+}
+.card:hover .thumb img{transform:scale(1.05);}
+.dur{
+  position:absolute;bottom:7px;right:7px;
+  background:rgba(0,0,0,0.82);color:#fff;
+  font-size:.68rem;font-weight:700;
+  padding:2px 6px;border-radius:4px;letter-spacing:.3px;
+}
+.card-body{padding:13px;}
+.card-title{
+  font-size:.86rem;font-weight:600;line-height:1.45;margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-meta{
+  font-size:.73rem;color:var(--muted);margin-bottom:11px;
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.dot{width:2px;height:2px;border-radius:50%;background:var(--muted);}
+.card-btns{display:flex;gap:7px;}
+.btn-a,.btn-v{
+  flex:1;padding:8px 0;border:none;border-radius:8px;
+  font-size:.76rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  transition:all .18s;
+}
+.btn-a{background:rgba(0,230,118,0.1);color:var(--green);}
+.btn-a:hover{background:rgba(0,230,118,0.2);}
+.btn-v{background:rgba(255,45,45,0.1);color:#ff6b6b;}
+.btn-v:hover{background:rgba(255,45,45,0.2);}
+
+/* ── MODAL ── */
+.overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.88);
+  justify-content:center;align-items:flex-end;
+}
 @media(min-width:600px){.overlay{align-items:center;padding:20px;}}
 .overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:28px 20px;position:relative;animation:slideUp .25s ease;}
-@media(min-width:600px){.modal{border-radius:20px;animation:fadeIn .2s ease;}}
-@keyframes slideUp{from{transform:translateY(60px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-@keyframes fadeIn{from{opacity:0;transform:scale(.97);}to{opacity:1;transform:scale(1);}}
-.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.modal-close:hover{background:rgba(255,255,255,0.15);color:#fff;}
-.modal-thumb{width:100%;border-radius:12px;aspect-ratio:16/9;object-fit:cover;margin-bottom:16px;}
-.modal-title{font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.4;}
-.modal-meta{font-size:.8rem;color:var(--muted);margin-bottom:20px;}
-.modal-spin{text-align:center;padding:48px 20px;color:var(--muted);}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px 20px 0 0;
+  width:100%;max-width:580px;max-height:92vh;overflow-y:auto;
+  padding:26px 18px;position:relative;
+  animation:slideUp .24s ease;
+}
+@media(min-width:600px){.modal{border-radius:18px;animation:fadeScaleIn .2s ease;}}
+@keyframes slideUp{from{transform:translateY(56px);opacity:0;}to{transform:none;opacity:1;}}
+@keyframes fadeScaleIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:none;}}
+.modal-x{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:none;
+  color:var(--muted);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.modal-x:hover{background:rgba(255,255,255,0.15);color:#fff;}
+.modal-thumb{width:100%;border-radius:10px;aspect-ratio:16/9;object-fit:cover;margin-bottom:14px;}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:5px;line-height:1.4;}
+.modal-meta{font-size:.77rem;color:var(--muted);margin-bottom:18px;}
+.modal-spin{text-align:center;padding:44px 20px;color:var(--muted);}
 
-/* FORMAT TABS */
-.fmt-tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);overflow-x:auto;}
-.fmt-tab{padding:9px 16px;border:none;background:none;color:var(--muted);font-size:.82rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .2s;}
-.fmt-tab.active{color:#fff;border-bottom-color:var(--red);}
-.fmt-tab:hover:not(.active){color:var(--text);}
-.fmt-count{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:10px;font-size:.68rem;padding:1px 7px;margin-left:5px;}
-.fmt-panel{display:none;}
-.fmt-panel.active{display:flex;flex-direction:column;gap:8px;}
+/* ── FORMAT TABS ── */
+.ftabs{
+  display:flex;gap:4px;margin-bottom:14px;
+  border-bottom:1px solid var(--border);overflow-x:auto;
+}
+.ftab{
+  padding:8px 14px;border:none;background:none;
+  color:var(--muted);font-size:.8rem;font-weight:600;
+  cursor:pointer;border-bottom:2px solid transparent;
+  margin-bottom:-1px;white-space:nowrap;transition:all .18s;
+}
+.ftab.active{color:#fff;border-bottom-color:var(--red);}
+.ftab:hover:not(.active){color:var(--text);}
+.fcnt{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.09);border-radius:10px;
+  font-size:.65rem;padding:1px 6px;margin-left:4px;
+}
+.fpanel{display:none;}
+.fpanel.active{display:flex;flex-direction:column;gap:7px;}
 
-/* QUALITY ROW */
-.quality-row{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .2s;}
-.quality-row:hover{border-color:rgba(255,45,45,0.25);}
-.quality-badge{width:72px;text-align:center;flex-shrink:0;}
-.quality-badge .res{font-size:1.1rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.quality-badge .fps{font-size:.68rem;color:var(--muted);margin-top:1px;}
-.quality-info{flex:1;min-width:0;}
-.quality-info .ql{font-size:.78rem;color:var(--muted);line-height:1.5;}
-.dl-merged{padding:10px 20px;border-radius:10px;border:none;background:var(--grad);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:opacity .2s;text-decoration:none;}
-.dl-merged:hover{opacity:.85;}
-.dl-merged.loading{opacity:.6;pointer-events:none;}
+/* ── QUALITY ROW ── */
+.qrow{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:11px;padding:13px 15px;
+  display:flex;align-items:center;gap:12px;
+  transition:border-color .18s;
+}
+.qrow:hover{border-color:rgba(255,45,45,0.22);}
+.qbadge{flex-shrink:0;text-align:center;width:64px;}
+.qbadge .qres{
+  font-size:1.05rem;font-weight:900;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.qbadge .qfps{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.qinfo{flex:1;min-width:0;}
+.qinfo .ql{font-size:.76rem;color:var(--muted);line-height:1.5;}
+.dl-btn{
+  flex-shrink:0;padding:9px 18px;border-radius:9px;border:none;
+  background:var(--grad);color:#fff;
+  font-size:.8rem;font-weight:700;cursor:pointer;
+  white-space:nowrap;text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:opacity .2s;
+}
+.dl-btn:hover{opacity:.85;}
+.dl-btn.loading{opacity:.55;pointer-events:none;}
+.dl-btn-a{
+  flex-shrink:0;padding:8px 14px;border-radius:9px;border:none;
+  background:rgba(0,230,118,0.13);color:var(--green);
+  font-size:.78rem;font-weight:700;cursor:pointer;
+  text-decoration:none;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:4px;
+  transition:background .18s;
+}
+.dl-btn-a:hover{background:rgba(0,230,118,0.22);}
 
-/* AUDIO FORMAT ROW */
-.fmt-row{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
-.fmt-row:hover{border-color:rgba(0,230,118,0.25);}
-.fmt-left{flex:1;min-width:0;}
-.fmt-res{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.fmt-detail{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.5;}
-.badge{padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
-.badge-a{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.dl-btn{padding:8px 14px;border-radius:8px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;transition:all .2s;}
-.dl-audio-btn{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.dl-audio-btn:hover{background:rgba(0,230,118,0.25);}
+/* ── AUDIO FORMATS ── */
+.afmt-row{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:10px;padding:11px 13px;
+  display:flex;align-items:center;gap:10px;
+  transition:border-color .18s;
+}
+.afmt-row:hover{border-color:rgba(0,230,118,0.2);}
+.afmt-info{flex:1;min-width:0;}
+.afmt-top{font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+.abadge{
+  padding:2px 7px;border-radius:20px;
+  font-size:.62rem;font-weight:800;letter-spacing:.4px;
+  text-transform:uppercase;
+  background:rgba(0,230,118,0.13);color:#69f0ae;
+}
+.afmt-detail{font-size:.7rem;color:var(--muted);margin-top:2px;line-height:1.5;}
 
-/* AUDIO CARD */
-.audio-card{background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2);border-radius:12px;padding:20px;}
-.audio-card h3{color:var(--green);font-size:.95rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.audio-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.audio-stat{background:rgba(0,0,0,0.25);border-radius:8px;padding:10px 12px;}
-.audio-stat label{font-size:.68rem;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px;}
-.audio-stat span{font-size:.9rem;font-weight:700;}
+/* ── AUDIO HERO CARD ── */
+.audio-hero{
+  background:linear-gradient(135deg,rgba(0,230,118,0.07),rgba(0,150,80,0.04));
+  border:1px solid rgba(0,230,118,0.18);
+  border-radius:12px;padding:18px;margin-bottom:18px;
+}
+.audio-hero-title{
+  font-size:.82rem;font-weight:700;color:var(--green);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.audio-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.astat{background:rgba(0,0,0,0.2);border-radius:8px;padding:9px 11px;}
+.astat label{font-size:.65rem;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px;}
+.astat span{font-size:.88rem;font-weight:700;}
 
-/* ERROR */
-.err-box{background:rgba(255,45,45,0.08);border:1px solid rgba(255,45,45,0.2);border-radius:10px;padding:18px;color:#ff8080;font-size:.88rem;line-height:1.6;}
+/* ── INFO NOTE ── */
+.note-ok{
+  background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.14);
+  border-radius:8px;padding:9px 13px;
+  font-size:.74rem;color:#69f0ae;line-height:1.55;margin-top:10px;
+}
 
-/* ══ API DOCS ══ */
-.docs-wrap{max-width:880px;margin:0 auto;padding:48px 20px 80px;}
-.docs-wrap h2{font-size:1.8rem;font-weight:900;margin-bottom:8px;}
-.docs-wrap h2 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.docs-subtitle{color:var(--muted);margin-bottom:44px;font-size:.95rem;}
-.endpoint-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:24px;overflow:hidden;}
-.endpoint-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-.method{padding:5px 12px;border-radius:6px;font-size:.75rem;font-weight:800;letter-spacing:.6px;}
-.get{background:rgba(0,230,118,0.15);color:#69f0ae;}
-.endpoint-path{font-family:'Courier New',monospace;font-size:.9rem;color:#c8d6ff;font-weight:600;word-break:break-all;}
-.endpoint-desc{color:var(--muted);font-size:.85rem;margin-left:auto;}
-.endpoint-body{padding:20px 24px;}
-.endpoint-body h4{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
-.params-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:20px;}
-.params-table th{text-align:left;padding:8px 12px;background:rgba(255,255,255,0.04);border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:.76rem;}
-.params-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
-.params-table tr:last-child td{border-bottom:none;}
-.param-name{font-family:'Courier New',monospace;color:#82b1ff;}
-.param-req{color:var(--red);font-size:.7rem;font-weight:700;}
-.param-opt{color:var(--muted);font-size:.7rem;}
-.code-block{background:#0a0a14;border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'Courier New',monospace;font-size:.8rem;line-height:1.7;overflow-x:auto;color:#c8d6ff;white-space:pre;}
-.code-block .k{color:#f92672;}
-.code-block .s{color:#a6e22e;}
-.code-block .n{color:#66d9ef;}
-.code-block .c{color:#75715e;}
-.tip-box{background:rgba(68,138,255,0.08);border:1px solid rgba(68,138,255,0.2);border-radius:8px;padding:14px;font-size:.83rem;color:#90caf9;line-height:1.6;margin-top:16px;}
+/* ── ERROR ── */
+.err-box{
+  background:rgba(255,45,45,0.07);border:1px solid rgba(255,45,45,0.18);
+  border-radius:10px;padding:16px;color:#ff8888;font-size:.86rem;line-height:1.6;
+}
 
-/* FOOTER */
-footer{text-align:center;padding:28px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;}
-footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;}
+/* ════════════════════════════
+   API DOCS
+════════════════════════════ */
+.docs-wrap{max-width:860px;margin:0 auto;padding:52px 20px 80px;}
+.docs-hero{margin-bottom:44px;}
+.docs-hero h2{font-size:1.75rem;font-weight:900;margin-bottom:6px;}
+.docs-hero h2 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.docs-hero p{color:var(--muted);font-size:.92rem;}
 
-/* MOBILE */
+.base-url-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:16px 20px;margin-bottom:32px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.base-url-card .label{color:var(--muted);font-size:.8rem;white-space:nowrap;}
+.base-url-card code{
+  font-family:'Courier New',monospace;font-size:.88rem;
+  color:#c8d6ff;word-break:break-all;
+}
+
+.ep-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:20px;overflow:hidden;
+}
+.ep-head{
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.method{
+  padding:4px 11px;border-radius:6px;
+  font-size:.7rem;font-weight:800;letter-spacing:.6px;
+}
+.get{background:rgba(0,230,118,0.13);color:#69f0ae;}
+.ep-path{
+  font-family:'Courier New',monospace;font-size:.88rem;
+  color:#c8d6ff;font-weight:600;word-break:break-all;
+}
+.ep-tag{
+  margin-left:auto;padding:3px 10px;border-radius:20px;
+  font-size:.68rem;font-weight:700;
+  background:rgba(255,45,45,0.13);color:#ff8080;
+}
+.ep-body{padding:20px 22px;}
+.ep-body h4{
+  font-size:.75rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;
+}
+.ptable{width:100%;border-collapse:collapse;font-size:.81rem;margin-bottom:18px;}
+.ptable th{
+  text-align:left;padding:7px 11px;
+  background:rgba(255,255,255,0.04);
+  border-bottom:1px solid var(--border);
+  color:var(--muted);font-weight:600;font-size:.73rem;
+}
+.ptable td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.ptable tr:last-child td{border-bottom:none;}
+.pname{font-family:'Courier New',monospace;color:#82b1ff;}
+.preq{color:var(--red);font-size:.68rem;font-weight:700;}
+.popt{color:var(--muted);font-size:.68rem;}
+
+.codeblock{
+  background:#080814;border:1px solid var(--border);
+  border-radius:10px;padding:15px;
+  font-family:'Courier New',monospace;font-size:.78rem;
+  line-height:1.75;overflow-x:auto;color:#c8d6ff;white-space:pre;
+}
+.codeblock .k{color:#f92672;}
+.codeblock .s{color:#a6e22e;}
+.codeblock .n{color:#66d9ef;}
+.codeblock .c{color:#636363;}
+.tip{
+  background:rgba(68,138,255,0.07);border:1px solid rgba(68,138,255,0.18);
+  border-radius:8px;padding:13px 16px;font-size:.8rem;
+  color:#90caf9;line-height:1.6;margin-top:14px;
+}
+
+/* ── LIVE TEST ── */
+.test-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.test-row input{
+  flex:1;min-width:180px;padding:10px 13px;
+  border-radius:9px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text);
+  font-size:.83rem;outline:none;
+}
+.test-row input:focus{border-color:rgba(255,45,45,0.35);}
+.tbtn-a{padding:10px 15px;border-radius:9px;border:none;background:rgba(0,230,118,0.13);color:var(--green);font-weight:700;cursor:pointer;font-size:.83rem;white-space:nowrap;}
+.tbtn-v{padding:10px 15px;border-radius:9px;border:none;background:rgba(68,138,255,0.13);color:#82b1ff;font-weight:700;cursor:pointer;font-size:.83rem;white-space:nowrap;}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:26px 16px;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:.78rem;line-height:1.7;
+}
+footer .heart{color:#ff4444;}
+footer strong{color:var(--text);}
+
+/* ── RESPONSIVE ── */
 @media(max-width:600px){
   .nav-links{display:none;}
   .hamburger{display:flex;}
-  .hero{padding:48px 16px 32px;}
-  .hero h1{font-size:1.7rem;}
-  .search-box{padding:4px 4px 4px 16px;}
-  .quality-row{flex-wrap:wrap;}
-  .dl-merged{width:100%;justify-content:center;}
-  .docs-wrap{padding:32px 14px 60px;}
-  .endpoint-header{flex-direction:column;align-items:flex-start;gap:10px;}
-  .endpoint-desc{margin-left:0;}
+  .hero{padding:48px 14px 30px;}
+  .hero h1{font-size:1.75rem;}
+  .qrow{flex-wrap:wrap;}
+  .dl-btn{width:100%;justify-content:center;}
+  .docs-wrap{padding:36px 14px 60px;}
+  .ep-head{flex-direction:column;align-items:flex-start;gap:8px;}
+  .ep-tag{margin-left:0;}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ── NAV ── -->
 <nav>
   <div class="logo">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="7" fill="url(#ng)"/>
-      <polygon points="11,8 22,14 11,20" fill="white"/>
-      <defs><linearGradient id="ng" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#ff2d2d"/><stop offset="100%" stop-color="#ff6b35"/></linearGradient></defs>
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <rect width="26" height="26" rx="6" fill="url(#lg)"/>
+      <polygon points="10,7 21,13 10,19" fill="white"/>
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="26" y2="26">
+          <stop offset="0%" stop-color="#ff2d2d"/>
+          <stop offset="100%" stop-color="#ff6b35"/>
+        </linearGradient>
+      </defs>
     </svg>
     YT Downloader
   </div>
+
   <div class="nav-links">
     <button class="nav-btn active" onclick="showPage('home',this)">Home</button>
     <button class="nav-btn" onclick="showPage('docs',this)">API Docs</button>
   </div>
-  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+
+  <button class="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </button>
 </nav>
+
 <div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-nav-btn active" onclick="showPage('home',this,true)">🏠 Home</button>
-  <button class="mobile-nav-btn" onclick="showPage('docs',this,true)">📖 API Docs</button>
+  <button class="mobile-nav-btn active" onclick="showPage('home',this,true)">Home</button>
+  <button class="mobile-nav-btn" onclick="showPage('docs',this,true)">API Docs</button>
 </div>
 
-<!-- HOME PAGE -->
+<!-- ════ HOME PAGE ════ -->
 <div class="page active" id="page-home">
+
   <div class="hero">
-    <h1>Download YouTube<br/><span>Videos &amp; Audio</span></h1>
-    <p>Search any video, pick your quality — merged with sound, ready to save.</p>
-    <div class="search-box">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;color:#888"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input type="text" id="searchInput" placeholder="Search YouTube videos…" autocomplete="off"/>
-      <button onclick="doSearch()">Search</button>
+    <h1>Download YouTube<br/><em>Videos &amp; Audio</em></h1>
+    <p>Search any video, choose quality — download with audio, no mute.</p>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search-row">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" stroke="#7878a0" stroke-width="2"/>
+          <path d="M16.5 16.5L21 21" stroke="#7878a0" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search YouTube videos…" autocomplete="off"/>
+        <button onclick="doSearch()">Search</button>
+      </div>
     </div>
-    <div class="divider" style="margin-top:18px;">or paste a link</div>
-    <div class="url-box">
-      <input type="text" id="directUrl" placeholder="https://youtu.be/… or youtube.com/watch?v=…"/>
+
+    <div class="url-divider">or paste a link</div>
+
+    <div class="url-row">
+      <input type="text" id="directUrl" placeholder="https://youtu.be/…"/>
       <button onclick="loadDirect()">Load</button>
     </div>
   </div>
@@ -240,214 +499,255 @@ footer span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fil
   <div class="loader" id="loader"><div class="spin"></div><br/>Searching…</div>
   <p class="section-label" id="sectionLabel"></p>
   <div class="grid" id="grid"></div>
+
 </div>
 
-<!-- DOCS PAGE -->
+<!-- ════ DOCS PAGE ════ -->
 <div class="page" id="page-docs">
 <div class="docs-wrap">
-  <h2>API <span>Documentation</span></h2>
-  <p class="docs-subtitle">All endpoints return JSON. Base URL: <code style="color:#82b1ff">https://your-app.onrender.com</code></p>
 
-  <!-- SEARCH -->
-  <div class="endpoint-card">
-    <div class="endpoint-header">
-      <span class="method get">GET</span>
-      <span class="endpoint-path">/search?q={query}&amp;limit={n}</span>
-      <span class="endpoint-desc">Search YouTube</span>
-    </div>
-    <div class="endpoint-body">
-      <h4>Parameters</h4>
-      <table class="params-table">
-        <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="param-name">q</td><td>string</td><td><span class="param-req">Required</span></td><td>Search query</td></tr>
-        <tr><td class="param-name">limit</td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Results count (default: 12)</td></tr>
-      </table>
-      <h4>Response</h4>
-      <div class="code-block">{ <span class="s">"results"</span>: [{ <span class="s">"id"</span>: <span class="s">"dQw4w9WgXcQ"</span>, <span class="s">"title"</span>: <span class="s">"..."</span>, <span class="s">"thumbnail"</span>: <span class="s">"..."</span>, <span class="s">"duration"</span>: <span class="s">"3:33"</span>, <span class="s">"channel"</span>: <span class="s">"..."</span>, <span class="s">"views"</span>: <span class="n">1400000000</span>, <span class="s">"url"</span>: <span class="s">"https://youtube.com/watch?v=..."</span> }] }</div>
-    </div>
+  <div class="docs-hero">
+    <h2>API <em>Documentation</em></h2>
+    <p>Three clean endpoints. All responses are JSON. Use them in bots, scripts, or apps.</p>
   </div>
 
-  <!-- AUDIO -->
-  <div class="endpoint-card">
-    <div class="endpoint-header">
+  <!-- Base URL -->
+  <div class="base-url-card">
+    <span class="label">Base URL</span>
+    <code id="baseUrlDisplay">https://your-app.onrender.com</code>
+  </div>
+
+  <!-- ── GET /search ── -->
+  <div class="ep-card">
+    <div class="ep-head">
       <span class="method get">GET</span>
-      <span class="endpoint-path">/download/audio/{youtube_url}</span>
-      <span class="endpoint-desc">Audio stream info</span>
+      <span class="ep-path">/search</span>
+      <span class="ep-tag">Search</span>
     </div>
-    <div class="endpoint-body">
-      <h4>Parameters</h4>
-      <table class="params-table">
-        <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL in the path</td></tr>
+    <div class="ep-body">
+      <h4>Query Parameters</h4>
+      <table class="ptable">
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        <tr><td class="pname">q</td><td>string</td><td><span class="preq">Yes</span></td><td>Search keyword or phrase</td></tr>
+        <tr><td class="pname">limit</td><td>integer</td><td><span class="popt">No</span></td><td>Number of results (default: 12, max: 20)</td></tr>
       </table>
-      <h4>Example</h4>
-      <div class="code-block">GET /download/audio/https://youtu.be/HNMP1UdjOsE</div>
-      <br/>
-      <div class="code-block">{
-  <span class="s">"status"</span>: <span class="s">"ok"</span>,
-  <span class="s">"title"</span>: <span class="s">"Video Title"</span>,
-  <span class="s">"duration"</span>: <span class="s">"3:45"</span>,
-  <span class="s">"channel"</span>: <span class="s">"Channel Name"</span>,
-  <span class="s">"best_audio"</span>: {
-    <span class="s">"format_id"</span>: <span class="s">"251"</span>, <span class="s">"ext"</span>: <span class="s">"webm"</span>,
-    <span class="s">"acodec"</span>: <span class="s">"opus"</span>, <span class="s">"abr"</span>: <span class="n">96</span>,
-    <span class="s">"filesize_human"</span>: <span class="s">"5.2 MB"</span>,
-    <span class="s">"url"</span>: <span class="s">"https://googlevideo.com/..."</span>
-  },
-  <span class="s">"all_audio_formats"</span>: [<span class="c">/* array */</span>]
+      <h4>Example Response</h4>
+      <div class="codeblock">{
+  <span class="s">"results"</span>: [
+    {
+      <span class="s">"id"</span>:        <span class="s">"dQw4w9WgXcQ"</span>,
+      <span class="s">"title"</span>:     <span class="s">"Never Gonna Give You Up"</span>,
+      <span class="s">"thumbnail"</span>: <span class="s">"https://i.ytimg.com/vi/..."</span>,
+      <span class="s">"duration"</span>:  <span class="s">"3:33"</span>,
+      <span class="s">"channel"</span>:   <span class="s">"Rick Astley"</span>,
+      <span class="s">"views"</span>:     <span class="n">1400000000</span>,
+      <span class="s">"url"</span>:       <span class="s">"https://youtube.com/watch?v=dQw4w9WgXcQ"</span>
+    }
+  ]
 }</div>
     </div>
   </div>
 
-  <!-- VIDEO INFO -->
-  <div class="endpoint-card">
-    <div class="endpoint-header">
+  <!-- ── GET /download/audio ── -->
+  <div class="ep-card">
+    <div class="ep-head">
       <span class="method get">GET</span>
-      <span class="endpoint-path">/download/video/{youtube_url}</span>
-      <span class="endpoint-desc">Format list + quality options</span>
+      <span class="ep-path">/download/audio/{youtube_url}</span>
+      <span class="ep-tag">Audio</span>
     </div>
-    <div class="endpoint-body">
-      <h4>Example</h4>
-      <div class="code-block">GET /download/video/https://youtu.be/HNMP1UdjOsE</div>
+    <div class="ep-body">
+      <h4>Path Parameter</h4>
+      <table class="ptable">
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        <tr><td class="pname">youtube_url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL (youtu.be or youtube.com/watch)</td></tr>
+      </table>
+      <h4>Example Request</h4>
+      <div class="codeblock">GET /download/audio/https://youtu.be/HNMP1UdjOsE</div>
       <br/>
-      <div class="code-block">{
-  <span class="s">"status"</span>: <span class="s">"ok"</span>,
-  <span class="s">"title"</span>: <span class="s">"..."</span>, <span class="s">"duration"</span>: <span class="s">"1:04"</span>,
+      <h4>Example Response</h4>
+      <div class="codeblock">{
+  <span class="s">"status"</span>:    <span class="s">"ok"</span>,
+  <span class="s">"title"</span>:     <span class="s">"Video Title"</span>,
+  <span class="s">"thumbnail"</span>: <span class="s">"https://..."</span>,
+  <span class="s">"duration"</span>:  <span class="s">"3:45"</span>,
+  <span class="s">"channel"</span>:   <span class="s">"Channel Name"</span>,
+  <span class="s">"best_audio"</span>: {
+    <span class="s">"format_id"</span>:      <span class="s">"251"</span>,
+    <span class="s">"ext"</span>:            <span class="s">"webm"</span>,
+    <span class="s">"acodec"</span>:         <span class="s">"opus"</span>,
+    <span class="s">"abr"</span>:            <span class="n">96</span>,
+    <span class="s">"filesize_human"</span>: <span class="s">"5.2 MB"</span>,
+    <span class="s">"url"</span>:            <span class="s">"https://..."</span>
+  },
+  <span class="s">"all_audio_formats"</span>: [
+    { <span class="s">"format_id"</span>: <span class="s">"140"</span>, <span class="s">"ext"</span>: <span class="s">"m4a"</span>, <span class="s">"acodec"</span>: <span class="s">"mp4a.40.2"</span>, <span class="s">"abr"</span>: <span class="n">128</span>, <span class="s">"url"</span>: <span class="s">"..."</span> },
+    { <span class="s">"format_id"</span>: <span class="s">"251"</span>, <span class="s">"ext"</span>: <span class="s">"webm"</span>, <span class="s">"acodec"</span>: <span class="s">"opus"</span>,    <span class="s">"abr"</span>: <span class="n">96</span>,  <span class="s">"url"</span>: <span class="s">"..."</span> }
+  ]
+}</div>
+    </div>
+  </div>
+
+  <!-- ── GET /download/video ── -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <span class="method get">GET</span>
+      <span class="ep-path">/download/video/{youtube_url}</span>
+      <span class="ep-tag">Video</span>
+    </div>
+    <div class="ep-body">
+      <h4>Path &amp; Query Parameters</h4>
+      <table class="ptable">
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        <tr><td class="pname">youtube_url</td><td>string</td><td><span class="preq">Yes</span></td><td>Full YouTube URL in the path</td></tr>
+        <tr><td class="pname">height</td><td>integer / "best"</td><td><span class="popt">No</span></td><td>When provided, downloads a merged Video+Audio MP4 at that quality (e.g. 1080, 720, 480, 360)</td></tr>
+      </table>
+      <h4>Without <code style="color:#82b1ff">?height</code> — Returns JSON with all formats</h4>
+      <div class="codeblock">GET /download/video/https://youtu.be/HNMP1UdjOsE
+
+{
+  <span class="s">"status"</span>:          <span class="s">"ok"</span>,
+  <span class="s">"title"</span>:           <span class="s">"Video Title"</span>,
+  <span class="s">"duration"</span>:        <span class="s">"1:04"</span>,
   <span class="s">"quality_options"</span>: [
     { <span class="s">"height"</span>: <span class="n">1080</span>, <span class="s">"fps"</span>: <span class="n">24</span> },
     { <span class="s">"height"</span>: <span class="n">720</span>,  <span class="s">"fps"</span>: <span class="n">24</span> },
     { <span class="s">"height"</span>: <span class="n">480</span>,  <span class="s">"fps"</span>: <span class="n">24</span> }
   ],
-  <span class="s">"formats"</span>: { <span class="s">"combined"</span>: [<span class="c">/*…*/</span>], <span class="s">"video_only"</span>: [<span class="c">/*…*/</span>], <span class="s">"audio_only"</span>: [<span class="c">/*…*/</span>] },
-  <span class="s">"formats_flat"</span>: [<span class="c">/* all formats */</span>],
-  <span class="s">"formats_count"</span>: <span class="n">23</span>
+  <span class="s">"formats"</span>: {
+    <span class="s">"combined"</span>:   [ <span class="c">/* streams with video + audio together */</span> ],
+    <span class="s">"video_only"</span>: [ <span class="c">/* high-quality video streams */</span> ],
+    <span class="s">"audio_only"</span>: [ <span class="c">/* audio streams */</span> ]
+  },
+  <span class="s">"formats_flat"</span>:   [ <span class="c">/* all formats in one array */</span> ],
+  <span class="s">"formats_count"</span>:  <span class="n">23</span>
 }</div>
-    </div>
-  </div>
+      <br/>
+      <h4>With <code style="color:#82b1ff">?height=720</code> — Downloads merged MP4 file</h4>
+      <div class="codeblock">GET /download/video/https://youtu.be/HNMP1UdjOsE?height=720
 
-  <!-- MERGE -->
-  <div class="endpoint-card">
-    <div class="endpoint-header">
-      <span class="method get">GET</span>
-      <span class="endpoint-path">/download/merge/{youtube_url}?height={p}</span>
-      <span class="endpoint-desc">⭐ Download merged video+audio MP4</span>
-    </div>
-    <div class="endpoint-body">
-      <h4>Parameters</h4>
-      <table class="params-table">
-        <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="param-name">youtube_url</td><td>string</td><td><span class="param-req">Required</span></td><td>Full YouTube URL in the path</td></tr>
-        <tr><td class="param-name">height</td><td>integer or "best"</td><td><span class="param-opt">Optional</span></td><td>Max video height: 1080, 720, 480, 360 etc. Default: best</td></tr>
-      </table>
-      <h4>Examples</h4>
-      <div class="code-block">GET /download/merge/https://youtu.be/HNMP1UdjOsE?height=1080
-GET /download/merge/https://youtu.be/HNMP1UdjOsE?height=720
-GET /download/merge/https://youtu.be/HNMP1UdjOsE</div>
-      <div class="tip-box">
-        ✅ This endpoint returns a <strong>binary MP4 file</strong> (Content-Disposition: attachment).<br/>
-        yt-dlp downloads the best video + best audio stream and merges them server-side with <strong>ffmpeg</strong>.<br/>
-        In your bot: <code>wget "BASE_URL/download/merge/YOUTUBE_URL?height=720" -O video.mp4</code>
+<span class="c">→ Response: binary video/mp4 file (Content-Disposition: attachment)</span>
+<span class="c">→ Video and audio are merged server-side before download</span></div>
+      <div class="tip">
+        <strong>Bot usage:</strong><br/>
+        <code>wget "BASE_URL/download/video/YOUTUBE_URL?height=1080" -O output.mp4</code><br/><br/>
+        Supported height values: <code>2160</code> · <code>1440</code> · <code>1080</code> · <code>720</code> · <code>480</code> · <code>360</code> · <code>240</code> · <code>best</code>
       </div>
     </div>
   </div>
 
-  <!-- LIVE TEST -->
-  <div class="endpoint-card">
-    <div class="endpoint-header"><span style="font-weight:700;">🧪 Live API Test</span></div>
-    <div class="endpoint-body">
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-        <input type="text" id="testUrl" placeholder="Paste a YouTube URL…" style="flex:1;min-width:200px;padding:10px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.85rem;outline:none;"/>
-        <button onclick="testApi('audio')" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(0,230,118,0.15);color:var(--green);font-weight:700;cursor:pointer;font-size:.85rem;">Test Audio</button>
-        <button onclick="testApi('video')" style="padding:10px 16px;border-radius:9px;border:none;background:rgba(68,138,255,0.15);color:#82b1ff;font-weight:700;cursor:pointer;font-size:.85rem;">Test Video</button>
+  <!-- ── Live Test ── -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <span style="font-size:.95rem;font-weight:700;">🧪 Live Test</span>
+    </div>
+    <div class="ep-body">
+      <div class="test-row">
+        <input type="text" id="testUrl" placeholder="Paste a YouTube URL to test…"/>
+        <button class="tbtn-a" onclick="testApi('audio')">Test Audio</button>
+        <button class="tbtn-v" onclick="testApi('video')">Test Video</button>
       </div>
       <div id="testResult" style="display:none;">
-        <div class="code-block" id="testOutput" style="max-height:400px;overflow:auto;white-space:pre-wrap;word-break:break-all;font-size:.75rem;"></div>
+        <div class="codeblock" id="testOutput" style="max-height:380px;overflow:auto;white-space:pre-wrap;word-break:break-all;font-size:.74rem;"></div>
       </div>
     </div>
   </div>
+
 </div>
 </div>
 
-<!-- MODAL -->
+<!-- ── MODAL ── -->
 <div class="overlay" id="overlay" onclick="closeBg(event)">
   <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modalContent"></div>
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div id="mc"></div>
   </div>
 </div>
 
-<footer>Built with <span>yt-dlp + ffmpeg</span> · Server-side merge · Cookies enabled</footer>
+<!-- ── FOOTER ── -->
+<footer>
+  Made with <span class="heart">♥</span> by <strong>Kashif Raza</strong>
+</footer>
 
 <script>
-// ── PAGE NAV ──────────────────────────────────────────────────────────
-function showPage(id, btn, mobile) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+// ── UTILS ──────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ea(s){return String(s||'').replace(/'/g,"\\'");}
+function fmtViews(n){
+  if(!n)return'';
+  if(n>=1e9)return(n/1e9).toFixed(1)+'B views';
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M views';
+  if(n>=1e3)return Math.round(n/1e3)+'K views';
+  return n+' views';
+}
+
+// ── PAGE NAV ───────────────────────────────────────────
+function showPage(id,btn,mobile){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if (mobile) {
-    const idx = id === 'home' ? 0 : 1;
+  if(mobile){
+    const idx=id==='home'?0:1;
     document.querySelectorAll('.nav-btn')[idx].classList.add('active');
     closeMenu();
   }
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
-function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
-function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');}
 
-// ── SEARCH ────────────────────────────────────────────────────────────
-document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-document.getElementById('directUrl').addEventListener('keydown', e => { if (e.key === 'Enter') loadDirect(); });
+// ── SEARCH ─────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+document.getElementById('directUrl').addEventListener('keydown',e=>{if(e.key==='Enter')loadDirect();});
 
-function doSearch() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q) return;
+function doSearch(){
+  const q=document.getElementById('searchInput').value.trim();
+  if(!q)return;
   setLoader(true);
-  document.getElementById('grid').innerHTML = '';
-  document.getElementById('sectionLabel').textContent = '';
-  fetch('/search?q=' + encodeURIComponent(q))
-    .then(r => r.json())
-    .then(d => {
+  document.getElementById('grid').innerHTML='';
+  document.getElementById('sectionLabel').textContent='';
+  fetch('/search?q='+encodeURIComponent(q))
+    .then(r=>r.json())
+    .then(d=>{
       setLoader(false);
-      if (d.error) { setSectionLabel('Error: ' + d.error); return; }
-      setSectionLabel(d.results.length + ' results for "' + q + '"');
+      if(d.error){setSL('Error: '+d.error);return;}
+      setSL(d.results.length+' results for "'+q+'"');
       renderCards(d.results);
     })
-    .catch(e => { setLoader(false); setSectionLabel('Search failed: ' + e.message); });
+    .catch(e=>{setLoader(false);setSL('Failed: '+e.message);});
 }
-
-function loadDirect() {
-  const url = document.getElementById('directUrl').value.trim();
-  if (!url) return;
-  openVideo(url);
+function loadDirect(){
+  const u=document.getElementById('directUrl').value.trim();
+  if(!u)return;
+  openVideo(u);
 }
-function setLoader(s) { document.getElementById('loader').style.display = s ? 'block' : 'none'; }
-function setSectionLabel(t) { document.getElementById('sectionLabel').textContent = t; }
+function setLoader(s){document.getElementById('loader').style.display=s?'block':'none';}
+function setSL(t){document.getElementById('sectionLabel').textContent=t;}
 
-// ── CARDS ─────────────────────────────────────────────────────────────
-function renderCards(videos) {
-  const g = document.getElementById('grid');
-  g.innerHTML = '';
-  videos.forEach(v => {
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.innerHTML = `
-      <div class="card-thumb">
+// ── CARDS ──────────────────────────────────────────────
+function renderCards(videos){
+  const g=document.getElementById('grid');
+  g.innerHTML='';
+  videos.forEach(v=>{
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`
+      <div class="thumb">
         <img src="${v.thumbnail}" alt="" loading="lazy" onerror="this.parentElement.style.background='#111'"/>
-        ${v.duration && v.duration !== 'N/A' ? `<div class="card-dur">${esc(v.duration)}</div>` : ''}
+        ${v.duration&&v.duration!=='N/A'?`<div class="dur">${esc(v.duration)}</div>`:''}
       </div>
       <div class="card-body">
         <div class="card-title">${esc(v.title)}</div>
         <div class="card-meta">
-          <span>${esc(v.channel || '')}</span>
-          ${v.views ? `<span class="dot"></span><span>${fmtViews(v.views)}</span>` : ''}
+          <span>${esc(v.channel||'')}</span>
+          ${v.views?`<span class="dot"></span><span>${fmtViews(v.views)}</span>`:''}
         </div>
-        <div class="card-actions">
+        <div class="card-btns">
           <button class="btn-a" onclick="openAudio('${ea(v.url)}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>Audio
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>Audio
           </button>
           <button class="btn-v" onclick="openVideo('${ea(v.url)}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>Video
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>Video
           </button>
         </div>
       </div>`;
@@ -455,173 +755,135 @@ function renderCards(videos) {
   });
 }
 
-function fmtViews(n) {
-  if (!n) return '';
-  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B views';
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M views';
-  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K views';
-  return n + ' views';
+// ── MODAL ──────────────────────────────────────────────
+function openModal(){document.getElementById('overlay').classList.add('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function closeBg(e){if(e.target===document.getElementById('overlay'))closeModal();}
+function setMC(h){document.getElementById('mc').innerHTML=h;}
+function spinHtml(c){
+  return`<div class="modal-spin"><div class="spin" style="border-top-color:${c}"></div><br/>Fetching…</div>`;
 }
 
-// ── MODAL ─────────────────────────────────────────────────────────────
-function openModal()  { document.getElementById('overlay').classList.add('open'); }
-function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-function closeBg(e)   { if (e.target === document.getElementById('overlay')) closeModal(); }
-function setMC(html)  { document.getElementById('modalContent').innerHTML = html; }
-function spinHtml(c)  {
-  return `<div class="modal-spin"><div class="spin" style="border-top-color:${c}"></div><br/>Fetching info…</div>`;
-}
-
-// ── AUDIO MODAL ───────────────────────────────────────────────────────
-function openAudio(url) {
+// ── AUDIO MODAL ────────────────────────────────────────
+function openAudio(url){
   openModal();
   setMC(spinHtml('var(--green)'));
-  fetch('/download/audio/' + encodeURIComponent(url))
-    .then(r => r.json())
-    .then(d => {
-      if (d.status === 'error') { setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`); return; }
-      const b   = d.best_audio;
-      const all = d.all_audio_formats || [];
-      let rows  = '';
-      all.forEach(f => {
-        const det = [f.ext, f.acodec && f.acodec !== 'none' ? f.acodec.split('.')[0] : null, f.abr ? f.abr + ' kbps' : null, f.filesize_human].filter(Boolean).join(' · ');
-        rows += `<div class="fmt-row">
-          <div class="fmt-left">
-            <div class="fmt-res"><span class="badge badge-a">Audio</span>${esc(f.abr ? f.abr + ' kbps' : '—')}</div>
-            <div class="fmt-detail">${esc(det)}</div>
+  fetch('/download/audio/'+encodeURIComponent(url))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
+      const b=d.best_audio;
+      const all=d.all_audio_formats||[];
+      let rows='';
+      all.forEach(f=>{
+        const det=[f.ext,f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,f.abr?f.abr+' kbps':null,f.filesize_human].filter(Boolean).join(' · ');
+        rows+=`<div class="afmt-row">
+          <div class="afmt-info">
+            <div class="afmt-top"><span class="abadge">Audio</span>${esc(f.abr?f.abr+' kbps':'—')}</div>
+            <div class="afmt-detail">${esc(det)}</div>
           </div>
-          <a class="dl-btn dl-audio-btn" href="${f.url}" target="_blank">⬇ Download</a>
+          <a class="dl-btn-a" href="${f.url}" target="_blank">⬇ Download</a>
         </div>`;
       });
       setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
-        <div class="modal-meta">${esc(d.channel || '')} · ${d.duration}</div>
-        <div class="audio-card" style="margin-bottom:${all.length > 1 ? '20px' : '0'}">
-          <h3>🎵 Best Audio</h3>
-          <div class="audio-stat-grid">
-            <div class="audio-stat"><label>Format</label><span>${esc(b.format_id)}</span></div>
-            <div class="audio-stat"><label>Codec</label><span>${esc(b.acodec || '—')}</span></div>
-            <div class="audio-stat"><label>Bitrate</label><span>${b.abr ? b.abr + ' kbps' : '—'}</span></div>
-            <div class="audio-stat"><label>Size</label><span>${b.filesize_human || '—'}</span></div>
+        <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
+        <div class="audio-hero">
+          <div class="audio-hero-title">🎵 Best Audio</div>
+          <div class="audio-stats">
+            <div class="astat"><label>Format</label><span>${esc(b.format_id)}</span></div>
+            <div class="astat"><label>Codec</label><span>${esc(b.acodec||'—')}</span></div>
+            <div class="astat"><label>Bitrate</label><span>${b.abr?b.abr+' kbps':'—'}</span></div>
+            <div class="astat"><label>Size</label><span>${b.filesize_human||'—'}</span></div>
           </div>
-          <a class="dl-merged" href="${b.url}" target="_blank" style="width:100%;justify-content:center;">
-            ⬇ Download Best Audio (.${b.ext})
-          </a>
+          <a class="dl-btn" href="${b.url}" target="_blank" style="width:100%;justify-content:center;">⬇ Download Best Audio (.${b.ext})</a>
         </div>
-        ${all.length > 1 ? `<div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:4px;">All Audio Formats</div><div style="display:flex;flex-direction:column;gap:7px;">${rows}</div>` : ''}
+        ${all.length>1?`<div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 9px;">All Formats</div><div style="display:flex;flex-direction:column;gap:6px;">${rows}</div>`:''}
       `);
     })
-    .catch(e => setMC(`<div class="err-box">❌ ${e.message}</div>`));
+    .catch(e=>setMC(`<div class="err-box">❌ ${e.message}</div>`));
 }
 
-// ── VIDEO MODAL ───────────────────────────────────────────────────────
-function openVideo(url) {
+// ── VIDEO MODAL ────────────────────────────────────────
+function openVideo(url){
   openModal();
   setMC(spinHtml('var(--red)'));
-  fetch('/download/video/' + encodeURIComponent(url))
-    .then(r => r.json())
-    .then(d => {
-      if (d.status === 'error') { setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`); return; }
-
-      const qualities = d.quality_options || [];
-      const aonly     = (d.formats && d.formats.audio_only) || [];
-
-      // Quality rows — each triggers server-side merge
-      let qRows = '';
-      if (qualities.length === 0) {
-        qRows = '<p style="color:var(--muted);font-size:.85rem;">No video formats found.</p>';
-      } else {
-        qualities.forEach(q => {
-          const label = q.height >= 1080 ? 'Full HD' : q.height >= 720 ? 'HD' : q.height >= 480 ? 'SD' : 'Low';
-          const mergeUrl = `/download/merge/${encodeURIComponent(url)}?height=${q.height}`;
-          qRows += `
-            <div class="quality-row">
-              <div class="quality-badge">
-                <div class="res">${q.height}p</div>
-                <div class="fps">${q.fps ? q.fps + ' fps' : ''}</div>
-              </div>
-              <div class="quality-info">
-                <div class="ql">${label} · MP4 · Video + Audio merged</div>
-              </div>
-              <a class="dl-merged" href="${mergeUrl}" id="dl-${q.height}"
-                onclick="startDl(this)" download>
-                ⬇ Download
-              </a>
-            </div>`;
-        });
-      }
-
-      // Audio-only rows
-      let aRows = '';
-      aonly.forEach(f => {
-        const det = [f.ext, f.acodec && f.acodec !== 'none' ? f.acodec.split('.')[0] : null, f.abr ? f.abr + ' kbps' : null, f.filesize_human].filter(Boolean).join(' · ');
-        aRows += `<div class="fmt-row">
-          <div class="fmt-left">
-            <div class="fmt-res"><span class="badge badge-a">Audio</span>${esc(f.abr ? f.abr + ' kbps' : '—')}</div>
-            <div class="fmt-detail">${esc(det)}</div>
+  fetch('/download/video/'+encodeURIComponent(url))
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
+      const qualities=d.quality_options||[];
+      const aonly=(d.formats&&d.formats.audio_only)||[];
+      let qHtml='';
+      qualities.forEach(q=>{
+        const label=q.height>=1080?'Full HD':q.height>=720?'HD':q.height>=480?'SD':'Low';
+        const dlUrl=`/download/video/${encodeURIComponent(url)}?height=${q.height}`;
+        qHtml+=`<div class="qrow">
+          <div class="qbadge">
+            <div class="qres">${q.height}p</div>
+            <div class="qfps">${q.fps?q.fps+'fps':''}</div>
           </div>
-          <a class="dl-btn dl-audio-btn" href="${f.url}" target="_blank">⬇ Download</a>
+          <div class="qinfo">
+            <div class="ql">${label} · MP4 · With Audio</div>
+          </div>
+          <a class="dl-btn" href="${dlUrl}" onclick="startDl(this)">⬇ Download</a>
         </div>`;
       });
-
+      let aHtml='';
+      aonly.forEach(f=>{
+        const det=[f.ext,f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,f.abr?f.abr+' kbps':null,f.filesize_human].filter(Boolean).join(' · ');
+        aHtml+=`<div class="afmt-row">
+          <div class="afmt-info">
+            <div class="afmt-top"><span class="abadge">Audio</span>${esc(f.abr?f.abr+' kbps':'—')}</div>
+            <div class="afmt-detail">${esc(det)}</div>
+          </div>
+          <a class="dl-btn-a" href="${f.url}" target="_blank">⬇ Download</a>
+        </div>`;
+      });
       setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
-        <div class="modal-meta">${esc(d.channel || '')} · ${d.duration}</div>
-
-        <div class="fmt-tabs">
-          <button class="fmt-tab active" onclick="switchTab(this,'tab-video')">
-            🎬 Video Quality <span class="fmt-count">${qualities.length}</span>
-          </button>
-          ${aonly.length ? `<button class="fmt-tab" onclick="switchTab(this,'tab-audio')">🎵 Audio Only <span class="fmt-count">${aonly.length}</span></button>` : ''}
+        <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
+        <div class="ftabs">
+          <button class="ftab active" onclick="switchTab(this,'tv')">Video<span class="fcnt">${qualities.length}</span></button>
+          ${aonly.length?`<button class="ftab" onclick="switchTab(this,'ta')">Audio Only<span class="fcnt">${aonly.length}</span></button>`:''}
         </div>
-
-        <div class="fmt-panel active" id="tab-video">
-          <div style="display:flex;flex-direction:column;gap:8px;">${qRows}</div>
-          <div style="margin-top:12px;background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.15);border-radius:8px;padding:10px 14px;font-size:.76rem;color:#69f0ae;line-height:1.6;">
-            ✅ All qualities include audio — merged server-side with ffmpeg before download.
-          </div>
+        <div class="fpanel active" id="tv">
+          <div style="display:flex;flex-direction:column;gap:7px;">${qHtml||'<p style="color:var(--muted);font-size:.85rem;">No video formats found.</p>'}</div>
+          <div class="note-ok">✅ All qualities include audio — merged before download.</div>
         </div>
-        ${aonly.length ? `<div class="fmt-panel" id="tab-audio"><div style="display:flex;flex-direction:column;gap:7px;">${aRows}</div></div>` : ''}
+        ${aonly.length?`<div class="fpanel" id="ta"><div style="display:flex;flex-direction:column;gap:6px;">${aHtml}</div></div>`:''}
       `);
     })
-    .catch(e => setMC(`<div class="err-box">❌ ${e.message}</div>`));
+    .catch(e=>setMC(`<div class="err-box">❌ ${e.message}</div>`));
 }
 
-function startDl(el) {
+function startDl(el){
   el.classList.add('loading');
-  el.textContent = '⏳ Merging…';
-  // Re-enable after 3 minutes
-  setTimeout(() => {
-    el.classList.remove('loading');
-    el.innerHTML = '⬇ Download';
-  }, 180000);
+  el.textContent='⏳ Merging…';
+  setTimeout(()=>{el.classList.remove('loading');el.innerHTML='⬇ Download';},180000);
 }
 
-function switchTab(btn, panelId) {
-  btn.closest('.modal').querySelectorAll('.fmt-tab').forEach(t => t.classList.remove('active'));
-  btn.closest('.modal').querySelectorAll('.fmt-panel').forEach(p => p.classList.remove('active'));
+function switchTab(btn,pid){
+  btn.closest('.modal').querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  btn.closest('.modal').querySelectorAll('.fpanel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById(panelId).classList.add('active');
+  document.getElementById(pid).classList.add('active');
 }
 
-// ── API TEST ──────────────────────────────────────────────────────────
-function testApi(type) {
-  const u = document.getElementById('testUrl').value.trim();
-  if (!u) return;
-  const path = type === 'audio'
-    ? '/download/audio/' + encodeURIComponent(u)
-    : '/download/video/' + encodeURIComponent(u);
-  const out = document.getElementById('testOutput');
-  document.getElementById('testResult').style.display = 'block';
-  out.textContent = 'Loading…';
-  fetch(path).then(r => r.json()).then(d => { out.textContent = JSON.stringify(d, null, 2); }).catch(e => { out.textContent = 'Error: ' + e.message; });
+// ── API TEST ───────────────────────────────────────────
+function testApi(type){
+  const u=document.getElementById('testUrl').value.trim();
+  if(!u)return;
+  const path=type==='audio'
+    ?'/download/audio/'+encodeURIComponent(u)
+    :'/download/video/'+encodeURIComponent(u);
+  const out=document.getElementById('testOutput');
+  document.getElementById('testResult').style.display='block';
+  out.textContent='Loading…';
+  fetch(path).then(r=>r.json()).then(d=>{out.textContent=JSON.stringify(d,null,2);}).catch(e=>{out.textContent='Error: '+e.message;});
 }
-
-// ── UTILS ─────────────────────────────────────────────────────────────
-function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function ea(s)  { return String(s || '').replace(/'/g, "\\'"); }
 </script>
 </body>
 </html>
