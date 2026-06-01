@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YT Downloader</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a1a;
+      border-bottom: 2px solid #ff0000;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: #ff0000;
+      letter-spacing: 1px;
+    }
+
+    header span { font-size: 1.8rem; }
+
+    .search-section {
+      max-width: 760px;
+      margin: 36px auto 28px;
+      padding: 0 16px;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 2px solid #333;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .search-bar input:focus { border-color: #ff0000; }
+
+    .search-bar button {
+      padding: 14px 26px;
+      border-radius: 10px;
+      border: none;
+      background: #ff0000;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-bar button:hover { background: #cc0000; }
+
+    .or-divider {
+      text-align: center;
+      margin: 18px 0;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .direct-url {
+      display: flex;
+      gap: 10px;
+    }
+
+    .direct-url input {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 2px solid #333;
+      background: #1e1e1e;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .direct-url input:focus { border-color: #ff4444; }
+
+    .direct-url button {
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: none;
+      background: #444;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .direct-url button:hover { background: #555; }
+
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      display: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      border: 4px solid #333;
+      border-top-color: #ff0000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(255,0,0,0.15); }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+
+    .card-body { padding: 14px; }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: #aaa;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-audio, .btn-video {
+      flex: 1;
+      padding: 9px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-audio { background: #1db954; color: #fff; }
+    .btn-video { background: #ff0000; color: #fff; }
+    .btn-audio:hover, .btn-video:hover { opacity: 0.85; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: #1a1a1a;
+      border-radius: 16px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-thumb {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .modal-meta {
+      font-size: 0.82rem;
+      color: #aaa;
+      margin-bottom: 18px;
+    }
+
+    .modal-loader {
+      text-align: center;
+      padding: 24px;
+      color: #888;
+    }
+
+    .formats-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .format-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #252525;
+      border-radius: 8px;
+      padding: 12px 14px;
+      gap: 10px;
+    }
+
+    .format-info { flex: 1; }
+
+    .format-res {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .format-detail {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .badge {
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .badge-video { background: #ff0000; color: #fff; }
+    .badge-audio { background: #1db954; color: #fff; }
+    .badge-combined { background: #6c35de; color: #fff; }
+
+    .btn-dl {
+      padding: 8px 16px;
+      background: #ff0000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .btn-dl:hover { background: #cc0000; }
+
+    .audio-result {
+      background: #1e2d1e;
+      border: 1px solid #1db954;
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .audio-result h3 { color: #1db954; margin-bottom: 10px; }
+    .audio-result p { font-size: 0.85rem; color: #ccc; margin: 4px 0; }
+
+    .audio-dl-btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 12px 28px;
+      background: #1db954;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .audio-dl-btn:hover { background: #17a349; }
+
+    .error-box {
+      background: #2d1e1e;
+      border: 1px solid #ff4444;
+      border-radius: 10px;
+      padding: 18px;
+      color: #ff9999;
+      font-size: 0.88rem;
+    }
+
+    .section-title {
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2rem; }
+      .card-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span>▶</span>
+  <h1>YT Downloader</h1>
+</header>
+
+<div class="search-section">
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search YouTube videos..." />
+    <button onclick="doSearch()">Search</button>
+  </div>
+
+  <div class="or-divider">— OR paste a YouTube link directly —</div>
+
+  <div class="direct-url">
+    <input type="text" id="directUrl" placeholder="https://youtu.be/... or https://www.youtube.com/watch?v=..." />
+    <button onclick="loadDirect()">Load Info</button>
+  </div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <div>Loading...</div>
+</div>
+
+<p class="section-title" id="sectionTitle"></p>
+
+<div class="results-grid" id="resultsGrid"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  document.getElementById('directUrl').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loadDirect();
+  });
+
+  function showLoader(show) {
+    document.getElementById('loader').style.display = show ? 'block' : 'none';
+  }
+
+  function doSearch() {
+    const q = searchInput.value.trim();
+    if (!q) return;
+    showLoader(true);
+    document.getElementById('resultsGrid').innerHTML = '';
+    document.getElementById('sectionTitle').textContent = '';
+
+    fetch(`/search?q=${encodeURIComponent(q)}`)
+      .then(r => r.json())
+      .then(data => {
+        showLoader(false);
+        if (data.error) {
+          document.getElementById('sectionTitle').textContent = 'Error: ' + data.error;
+          return;
+        }
+        document.getElementById('sectionTitle').textContent = `${data.results.length} results found`;
+        renderCards(data.results);
+      })
+      .catch(err => {
+        showLoader(false);
+        document.getElementById('sectionTitle').textContent = 'Search failed: ' + err.message;
+      });
+  }
+
+  function renderCards(videos) {
+    const grid = document.getElementById('resultsGrid');
+    grid.innerHTML = '';
+    videos.forEach(v => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src="${v.thumbnail}" alt="${escHtml(v.title)}" loading="lazy" />
+        <div class="card-body">
+          <div class="card-title">${escHtml(v.title)}</div>
+          <div class="card-meta">
+            <span>${escHtml(v.channel)}</span>
+            <span>${v.duration || ''}</span>
+            <span>${v.views || ''}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-audio" onclick="openAudio('${escAttr(v.url)}', event)">🎵 Audio</button>
+            <button class="btn-video" onclick="openVideo('${escAttr(v.url)}', event)">🎬 Video</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function loadDirect() {
+    const url = document.getElementById('directUrl').value.trim();
+    if (!url) return;
+    openVideo(url, null, true);
+  }
+
+  function openAudio(url, event, directMode) {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('modalOverlay');
+    const content = document.getElementById('modalContent');
+    overlay.classList.add('active');
+    content.innerHTML = `<div class="modal-loader"><div class="spinner" style="display:inline-block;width:32px;height:32px;border:3px solid #333;border-top-color:#1db954;border-radius:50%;animation:spin .8s linear infinite;"></div><br/>Fetching audio info...</div>`;
+
+    fetch(`/download/audio/${encodeURIComponent(url)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'error') {
+          content.innerHTML = `<div class="error-box">❌ ${escHtml(data.error)}</div>`;
+          return;
+        }
+        content.innerHTML = `
+          <img class="modal-thumb" src="${data.thumbnail}" />
+          <div class="modal-title">${escHtml(data.title)}</div>
+          <div class="modal-meta">${escHtml(data.channel || '')} · ${data.duration}</div>
+          <div class="audio-result">
+            <h3>🎵 Best Audio Format</h3>
+            <p><strong>Format ID:</strong> ${data.format_id}</p>
+            <p><strong>Codec:</strong> ${data.acodec || 'N/A'}</p>
+            <p><strong>Extension:</strong> ${data.ext}</p>
+            <p><strong>Bitrate:</strong> ${data.abr ? data.abr + ' kbps' : 'N/A'}</p>
+            <p><strong>Size:</strong> ${data.filesize_human || 'N/A'}</p>
+            <a class="audio-dl-btn" href="${data.url}" target="_blank" download>⬇ Download Audio</a>
+          </div>
+        `;
+      })
+      .catch(err => {
+        content.innerHTML = `<div class="error-box">❌ ${err.message}</div>`;
+      });
+  }
+
+  function openVideo(url, event, directMode) {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('modalOverlay');
+    const content = document.getElementById('modalContent');
+    overlay.classList.add('active');
+    content.innerHTML = `<div class="modal-loader"><div class="spinner" style="display:inline-block;width:32px;height:32px;border:3px solid #333;border-top-color:#ff0000;border-radius:50%;animation:spin .8s linear infinite;"></div><br/>Fetching all available formats...</div>`;
+
+    fetch(`/download/video/${encodeURIComponent(url)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'error') {
+          content.innerHTML = `<div class="error-box">❌ ${escHtml(data.error)}</div>`;
+          return;
+        }
+
+        let formatsHtml = '';
+        data.formats.forEach(fmt => {
+          let badge = '';
+          if (fmt.has_video && fmt.has_audio) badge = `<span class="badge badge-combined">Video+Audio</span>`;
+          else if (fmt.has_video) badge = `<span class="badge badge-video">Video</span>`;
+          else badge = `<span class="badge badge-audio">Audio</span>`;
+
+          const detail = [
+            fmt.ext,
+            fmt.format_note,
+            fmt.fps ? `${fmt.fps}fps` : null,
+            fmt.vcodec && fmt.vcodec !== 'none' ? fmt.vcodec.split('.')[0] : null,
+            fmt.acodec && fmt.acodec !== 'none' ? fmt.acodec.split('.')[0] : null,
+            fmt.filesize_human || null,
+          ].filter(Boolean).join(' · ');
+
+          formatsHtml += `
+            <div class="format-row">
+              <div class="format-info">
+                <div class="format-res">${badge}${escHtml(fmt.resolution)}</div>
+                <div class="format-detail">${escHtml(detail)}</div>
+              </div>
+              <a class="btn-dl" href="${fmt.url}" target="_blank">⬇ Download</a>
+            </div>
+          `;
+        });
+
+        content.innerHTML = `
+          <img class="modal-thumb" src="${data.thumbnail}" />
+          <div class="modal-title">${escHtml(data.title)}</div>
+          <div class="modal-meta">${escHtml(data.channel || '')} · ${data.duration} · ${data.formats_count} formats</div>
+          <div class="formats-list">${formatsHtml}</div>
+        `;
+      })
+      .catch(err => {
+        content.innerHTML = `<div class="error-box">❌ ${err.message}</div>`;
+      });
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+
+  function closeModalOnBg(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function escAttr(str) {
+    if (!str) return '';
+    return String(str).replace(/'/g, "\\'");
+  }
+</script>
+</body>
+</html>
