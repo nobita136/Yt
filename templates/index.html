@@ -312,6 +312,38 @@ nav{
 .astat label{font-size:.65rem;color:var(--muted);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px;}
 .astat span{font-size:.88rem;font-weight:700;}
 
+/* ── QUALITY DOWNLOAD BUTTONS (new clean modals) ── */
+.qdl-section{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
+.qdl-btn{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:14px 18px;
+  text-decoration:none;color:var(--text);
+  transition:border-color .2s,background .2s,transform .15s;
+  cursor:pointer;
+}
+.qdl-btn:hover{
+  border-color:var(--qc,var(--red));
+  background:rgba(255,255,255,0.07);
+  transform:translateY(-1px);
+}
+.qdl-btn.qdl-audio{--qc:var(--green);}
+.qdl-btn.qdl-disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.qdl-icon{font-size:1.5rem;flex-shrink:0;line-height:1;}
+.qdl-text{flex:1;display:flex;flex-direction:column;gap:2px;}
+.qdl-label{font-size:.95rem;font-weight:700;line-height:1.2;}
+.qdl-sub{font-size:.72rem;color:var(--muted);}
+.qdl-arrow{
+  flex-shrink:0;font-size:1.1rem;opacity:.7;
+  transition:transform .2s;
+}
+.qdl-btn:hover .qdl-arrow{transform:translateY(2px);opacity:1;}
+.qdl-note{
+  margin-top:14px;font-size:.73rem;
+  color:var(--muted);text-align:center;line-height:1.6;
+}
+
 /* ── INFO NOTE ── */
 .note-ok{
   background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.14);
@@ -670,6 +702,10 @@ footer strong{color:var(--text);}
 
 <script>
 // ── UTILS ──────────────────────────────────────────────
+(function(){
+  const el = document.getElementById('baseUrlDisplay');
+  if (el) el.textContent = window.location.origin;
+})();
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function ea(s){return String(s||'').replace(/'/g,"\\'");}
 function fmtViews(n){
@@ -772,34 +808,20 @@ function openAudio(url){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
-      const b=d.best_audio;
-      const all=d.all_audio_formats||[];
-      let rows='';
-      all.forEach(f=>{
-        const det=[f.ext,f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,f.abr?f.abr+' kbps':null,f.filesize_human].filter(Boolean).join(' · ');
-        rows+=`<div class="afmt-row">
-          <div class="afmt-info">
-            <div class="afmt-top"><span class="abadge">Audio</span>${esc(f.abr?f.abr+' kbps':'—')}</div>
-            <div class="afmt-detail">${esc(det)}</div>
-          </div>
-          <a class="dl-btn-a" href="${f.url}" target="_blank">⬇ Download</a>
-        </div>`;
-      });
       setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
         <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
-        <div class="audio-hero">
-          <div class="audio-hero-title">🎵 Best Audio</div>
-          <div class="audio-stats">
-            <div class="astat"><label>Format</label><span>${esc(b.format_id)}</span></div>
-            <div class="astat"><label>Codec</label><span>${esc(b.acodec||'—')}</span></div>
-            <div class="astat"><label>Bitrate</label><span>${b.abr?b.abr+' kbps':'—'}</span></div>
-            <div class="astat"><label>Size</label><span>${b.filesize_human||'—'}</span></div>
-          </div>
-          <a class="dl-btn" href="${b.url}" target="_blank" style="width:100%;justify-content:center;">⬇ Download Best Audio (.${b.ext})</a>
+        <div class="qdl-section">
+          <a class="qdl-btn qdl-audio" href="/dl/audio?url=${encodeURIComponent(url)}">
+            <span class="qdl-icon">🎵</span>
+            <span class="qdl-text">
+              <span class="qdl-label">Download MP3</span>
+              <span class="qdl-sub">Low Quality · MP3</span>
+            </span>
+            <span class="qdl-arrow">⬇</span>
+          </a>
         </div>
-        ${all.length>1?`<div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 9px;">All Formats</div><div style="display:flex;flex-direction:column;gap:6px;">${rows}</div>`:''}
       `);
     })
     .catch(e=>setMC(`<div class="err-box">❌ ${e.message}</div>`));
@@ -813,56 +835,40 @@ function openVideo(url){
     .then(r=>r.json())
     .then(d=>{
       if(d.status==='error'){setMC(`<div class="err-box">❌ ${esc(d.error)}</div>`);return;}
-      const combined=(d.formats&&d.formats.combined)||[];
-      const vonly=(d.formats&&d.formats.video_only)||[];
-      const aonly=(d.formats&&d.formats.audio_only)||[];
-
-      function fmtRow(f,badge){
-        const label=badge==='Video+Audio'?(f.height?(f.height>=1080?'Full HD':f.height>=720?'HD':f.height>=480?'SD':'Low'):''):'';
-        const det=[f.ext, f.height?f.height+'p':null, f.fps?f.fps+'fps':null,
-                   f.vcodec&&f.vcodec!=='none'?f.vcodec.split('.')[0]:null,
-                   f.acodec&&f.acodec!=='none'?f.acodec.split('.')[0]:null,
-                   f.abr?f.abr+' kbps':null, f.filesize_human].filter(Boolean).join(' · ');
-        return`<div class="qrow">
-          <div class="qbadge">
-            <div class="qres">${f.height?f.height+'p':(f.ext||'').toUpperCase()}</div>
-            <div class="qfps">${f.fps?f.fps+'fps':f.abr?f.abr+'kbps':''}</div>
-          </div>
-          <div class="qinfo">
-            <div class="ql">${esc(label||badge)} · ${esc(det)}</div>
-          </div>
-          <a class="dl-btn" href="${f.url}" target="_blank">⬇ Download</a>
-        </div>`;
-      }
-
-      let cHtml=combined.map(f=>fmtRow(f,'Video+Audio')).join('');
-      let vHtml=vonly.map(f=>fmtRow(f,'Video Only')).join('');
-      let aHtml=aonly.map(f=>fmtRow(f,'Audio Only')).join('');
-
-      const tabs=`<div class="ftabs">
-        ${combined.length?`<button class="ftab active" onclick="switchTab(this,'tv')">Video+Audio<span class="fcnt">${combined.length}</span></button>`:''}
-        ${vonly.length?`<button class="ftab${!combined.length?' active':''}" onclick="switchTab(this,'tvonly')">Video Only<span class="fcnt">${vonly.length}</span></button>`:''}
-        ${aonly.length?`<button class="ftab${!combined.length&&!vonly.length?' active':''}" onclick="switchTab(this,'ta')">Audio Only<span class="fcnt">${aonly.length}</span></button>`:''}
-      </div>`;
-
+      const qualities=d.qualities||[];
+      const icons={1080:'🎬',720:'📹',360:'📱'};
+      const cols={1080:'var(--red)',720:'#f59e0b',360:'#10b981'};
+      let rows='';
+      [1080,720,360].forEach(h=>{
+        const q=qualities.find(x=>x.height===h);
+        if(q){
+          rows+=`<a class="qdl-btn" style="--qc:${cols[h]}" href="/download/video?url=${encodeURIComponent(url)}&height=${h}">
+            <span class="qdl-icon">${icons[h]||'📺'}</span>
+            <span class="qdl-text">
+              <span class="qdl-label">${h}p &nbsp;<span style="font-size:.7rem;opacity:.7">${q.label}</span></span>
+              <span class="qdl-sub">MP4 · With Audio</span>
+            </span>
+            <span class="qdl-arrow">⬇</span>
+          </a>`;
+        } else {
+          rows+=`<div class="qdl-btn qdl-disabled">
+            <span class="qdl-icon" style="opacity:.3">${icons[h]||'📺'}</span>
+            <span class="qdl-text">
+              <span class="qdl-label" style="opacity:.4">${h}p</span>
+              <span class="qdl-sub" style="opacity:.35">Not available</span>
+            </span>
+          </div>`;
+        }
+      });
       setMC(`
         <img class="modal-thumb" src="${d.thumbnail}" onerror="this.style.display='none'"/>
         <div class="modal-title">${esc(d.title)}</div>
         <div class="modal-meta">${esc(d.channel||'')} · ${d.duration}</div>
-        ${tabs}
-        ${combined.length?`<div class="fpanel active" id="tv"><div style="display:flex;flex-direction:column;gap:7px;">${cHtml}</div></div>`:''}
-        ${vonly.length?`<div class="fpanel${!combined.length?' active':''}" id="tvonly"><div style="display:flex;flex-direction:column;gap:7px;">${vHtml}</div></div>`:''}
-        ${aonly.length?`<div class="fpanel${!combined.length&&!vonly.length?' active':''}" id="ta"><div style="display:flex;flex-direction:column;gap:6px;">${aHtml}</div></div>`:''}
+        <div class="qdl-section">${rows}</div>
+        <div class="qdl-note">⏳ Merging video + audio on server — download starts in a moment.</div>
       `);
     })
     .catch(e=>setMC(`<div class="err-box">❌ ${e.message}</div>`));
-}
-
-function switchTab(btn,pid){
-  btn.closest('.modal').querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
-  btn.closest('.modal').querySelectorAll('.fpanel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(pid).classList.add('active');
 }
 
 // ── API TEST ───────────────────────────────────────────
